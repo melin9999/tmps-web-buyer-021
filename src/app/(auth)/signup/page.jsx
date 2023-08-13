@@ -42,12 +42,9 @@ const Signup = () => {
   const [editCodeError, setEditCodeError] = useState(false);
   const [editAddress, setEditAddress] = useState("");
   const [editAddressError, setEditAddressError] = useState(false);
-  const [editDecription, setEditDecription] = useState("");
-  const [editDecriptionError, setEditDecriptionError] = useState(false);
-  const [editWebAddress, setEditWebAddress] = useState("");
-  const [editWebAddressError, setEditWebAddressError] = useState(false);
-  const [editRegNumber, setEditRegNumber] = useState("");
-  const [editRegNumberError, setEditRegNumberError] = useState(false);
+  const [editDeliveryAddress, setEditDeliveryAddress] = useState("");
+  const [editDeliveryAddressError, setEditDeliveryAddressError] = useState(false);
+  const [editSameAddress, setEditSameAddress] = useState(false);
 
   const [editPassword, setEditPassword] = useState("");
   const [editPasswordError, setEditPasswordError] = useState(false);
@@ -153,6 +150,12 @@ const Signup = () => {
     }
   }, [editNotifyBy]);
 
+  useEffect(() => {
+    if(editSameAddress){
+      setEditDeliveryAddress(editAddress);
+    }
+  }, [editSameAddress, editAddress]);
+
   const clearErrors = () => {
     setEditFirstNameError(false);
     setEditLastNameError(false);
@@ -166,9 +169,7 @@ const Signup = () => {
     setEditUserAgreementError(false);
     setEditCodeError(false);
     setEditAddressError(false);
-    setEditDecriptionError(false);
-    setEditWebAddressError(false);
-    setEditRegNumberError(false);
+    setEditDeliveryAddressError(false);
     
     setServerError(false);
   }
@@ -185,9 +186,7 @@ const Signup = () => {
     setEditUserAgreement(false);
     setEditCode("");
     setEditAddress("");
-    setEditDecription("");
-    setEditWebAddress("");
-    setEditRegNumber("");
+    setEditDeliveryAddress("");
     setOpenCrop(false);
     setEditImage("none");
     setFile(null);
@@ -243,7 +242,7 @@ const Signup = () => {
     else{
       try{
         const response = await axios.post("/api/auth/create", {
-          userType: "seller",
+          userType: "buyer",
           firstName: editFirstName,
           lastName: editLastName,
           phone: editPhone,
@@ -379,21 +378,13 @@ const Signup = () => {
     clearErrors();
     setIsSaving(true);
     var error = false;
-    if(editDecription.length>1024) {
+    if(editDeliveryAddress.length>256) {
       error = true;
-      setEditDecriptionError(true);
+      setEditDeliveryAddressError(true);
     }
     if(editAddress.length>256) {
       error = true;
       setEditAddressError(true);
-    }
-    if(editWebAddress.length>128) {
-      error = true;
-      setEditWebAddressError(true);
-    }
-    if(editRegNumber.length>128) {
-      error = true;
-      setEditRegNumberError(true);
     }
     if(error) {
       setIsSaving(false);
@@ -402,10 +393,8 @@ const Signup = () => {
       try{
         const response = await axios.post("/api/auth/edit-details", {
           id: editId,
-          description: editDecription,
+          deliveryAddress: editDeliveryAddress,
           address: editAddress,
-          webAddress: editWebAddress,
-          regNumber: editRegNumber
         });
         if(response.data.status==="ok"){
           saveImage();
@@ -775,22 +764,6 @@ const Signup = () => {
             <div className='form_row_double_top'>
               <div className='form_field_container_vertical'>
                 <TextField 
-                  id='description'
-                  label="Decription" 
-                  variant="outlined" 
-                  className='form_text_field' 
-                  value={editDecription} 
-                  error={editDecriptionError}
-                  onChange={event=>setEditDecription(event.target.value)}
-                  disabled={isSaving||isLoading}
-                  multiline={true}
-                  rows={4}
-                  onFocus={()=>setEditDecriptionError(false)}
-                />
-                {editDecriptionError && <span className='form_error_floating'>Invalid Decription</span>}
-              </div>
-              <div className='form_field_container_vertical'>
-                <TextField 
                   id='address'
                   label="Address" 
                   variant="outlined" 
@@ -805,39 +778,32 @@ const Signup = () => {
                 />
                 {editAddressError && <span className='form_error_floating'>Invalid Address</span>}
               </div>
-            </div>
-            <div className='form_row_double_top'>              
               <div className='form_field_container_vertical'>
-                <div className='form_field_container'>
-                  <TextField 
-                    id='web-address'
-                    label="Web Address" 
-                    variant="outlined" 
-                    className='form_text_field' 
-                    value={editWebAddress} 
-                    error={editWebAddressError}
-                    onChange={event=>setEditWebAddress(event.target.value)}
-                    disabled={isSaving||isLoading}
-                    onFocus={()=>setEditWebAddressError(false)}
-                  />
-                  {editWebAddressError && <span className='form_error_floating'>Invalid Web Address</span>}
-                </div>
-              </div>
-              <div className='form_field_container_vertical'>
-                <div className='form_field_container'>
-                  <TextField 
-                    id='reg-number'
-                    label="Reg Number" 
-                    variant="outlined" 
-                    className='form_text_field' 
-                    value={editRegNumber} 
-                    error={editRegNumberError}
-                    onChange={event=>setEditRegNumber(event.target.value)}
-                    disabled={isSaving||isLoading}
-                    onFocus={()=>setEditRegNumberError(false)}
-                  />
-                  {editRegNumberError && <span className='form_error_floating'>Invalid Reg Number</span>}
-                </div>
+                <TextField 
+                  id='delivery-address'
+                  label="Delivery Address" 
+                  variant="outlined" 
+                  className='form_text_field' 
+                  value={editDeliveryAddress} 
+                  error={editDeliveryAddressError}
+                  onChange={event=>setEditDeliveryAddress(event.target.value)}
+                  disabled={isSaving||isLoading}
+                  multiline={true}
+                  rows={4}
+                  onFocus={()=>setEditDeliveryAddressError(false)}
+                />
+                <FormControlLabel 
+                  control={
+                    <Checkbox 
+                      id='same-address'
+                      checked={editSameAddress} 
+                      onChange={event=>setEditSameAddress(event.target.checked)}
+                      disabled={isLoading||isSaving}
+                    />
+                  } 
+                  label="Same Address"
+                />
+                {editDeliveryAddressError && <span className='form_error_floating'>Invalid Delivery Address</span>}
               </div>
             </div>
             <div className='form_row_double_fixed'>

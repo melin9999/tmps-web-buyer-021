@@ -27,7 +27,7 @@ body{
 
 
 .form_header{
-  @apply text-violet-600 font-medium text-lg;
+  @apply text-emerald-700 font-medium text-lg;
 }
 
 .form_sub_header{
@@ -35,7 +35,7 @@ body{
 }
 
 .form_internal_header{
-  @apply text-violet-600 text-sm;
+  @apply text-emerald-700 text-sm;
 }
 
 .header_container{
@@ -306,7 +306,7 @@ body{
 }
 
 .table_header_container{
-  @apply flex flex-row w-full justify-center items-center bg-violet-600;
+  @apply flex flex-row w-full justify-center items-center bg-emerald-700;
 }
 
 .table_header_col{

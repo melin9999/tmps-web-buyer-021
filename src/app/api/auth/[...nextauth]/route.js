@@ -19,7 +19,7 @@ const handler = NextAuth({
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            userType: 'seller',
+            userType: 'buyer',
             email: email,
             password: password
           })
@@ -51,7 +51,7 @@ const handler = NextAuth({
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            userType: 'seller',
+            userType: 'buyer',
             email: profile.email
           })
         });
@@ -71,7 +71,7 @@ const handler = NextAuth({
               "Content-Type": "application/json"
             },
             body: JSON.stringify({
-              userType: 'seller',
+              userType: 'buyer',
               email: profile.email,
               firstName: profile.given_name,
               lastName: profile.family_name,

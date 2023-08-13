@@ -6,7 +6,7 @@ import axios from "axios";
 import CropEasy from '@/components/crop/CropEasy';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Avatar, CircularProgress, InputAdornment, MenuItem, Dialog, IconButton, TextField, Button } from "@mui/material";
+import { Avatar, CircularProgress, InputAdornment, MenuItem, Dialog, IconButton, TextField, Button, FormControlLabel, Checkbox } from "@mui/material";
 import { Folder, CropRotate, Save, Delete, Key, CameraAlt, MailOutline, Phone, Close, EditOutlined } from '@mui/icons-material';
 import useWindowDimensions from '@/hooks/useWindowDimension';
 import LoadingScreen from '@/components/screens/LoadingScreen';
@@ -35,12 +35,9 @@ const Profile = () => {
   const [editDuplicateEmailError, setEditDuplicateEmailError] = useState(false);
   const [editAddress, setEditAddress] = useState("");
   const [editAddressError, setEditAddressError] = useState(false);
-  const [editDescription, setEditDescription] = useState("");
-  const [editDescriptionError, setEditDescriptionError] = useState(false);
-  const [editRegNumber, setEditRegNumber] = useState("");
-  const [editRegNumberError, setEditRegNumberError] = useState(false);
-  const [editWebAddress, setEditWebAddress] = useState("");
-  const [editWebAddressError, setEditWebAddressError] = useState(false);
+  const [editDeliveryAddress, setEditDeliveryAddress] = useState("");
+  const [editDeliveryAddressError, setEditDeliveryAddressError] = useState(false);
+  const [editSameAddress, setEditSameAddress] = useState(false);
   const [editNotifyBy, setEditNotifyBy] = useState("email");
   const [editNotifyByError, setEditNotifyByError] = useState(false);
 
@@ -65,6 +62,12 @@ const Profile = () => {
   }, [status]);
 
   useEffect(() => {
+    if(editSameAddress){
+      setEditDeliveryAddress(editAddress);
+    }
+  }, [editSameAddress, editAddress]);
+
+  useEffect(() => {
     setIsLoading(false);
     setIsSaving(false);
   }, []);
@@ -82,9 +85,7 @@ const Profile = () => {
       setEditPhone(response.data.data.phone);
       setEditNotifyBy(response.data.data.notify_by);
       setEditAddress(response.data.data.address);
-      setEditDescription(response.data.data.description);
-      setEditRegNumber(response.data.data.reg_number);
-      setEditWebAddress(response.data.data.web_address);
+      setEditDeliveryAddress(response.data.data.delivery_address);
       if(response.data.data.image_url==="none"){
         if(session.user.image!==""){
           setPhotoURL(session.user.image);
@@ -118,9 +119,7 @@ const Profile = () => {
     setEditDuplicatePhoneError(false);
     setEditNotifyByError(false);
     setEditAddressError(false);
-    setEditDescriptionError(false);
-    setEditWebAddressError(false);
-    setEditRegNumberError(false);
+    setEditDeliveryAddressError(false);
     
     setServerError(false);
   }
@@ -135,9 +134,7 @@ const Profile = () => {
     setEditConfirm("");
     setEditNotifyBy("email");
     setEditAddress("");
-    setEditDescription("");
-    setEditWebAddress("");
-    setEditRegNumber("");
+    setEditDeliveryAddress("");
     setOpenCrop(false);
     setPhotoURL("none");
     setFile(null);
@@ -159,17 +156,9 @@ const Profile = () => {
       error = true;
       setEditAddressError(true);
     }
-    if(editDescription.length>2048) {
+    if(editDeliveryAddress.length>256) {
       error = true;
-      setEditDescriptionError(true);
-    }
-    if(editWebAddress.length>128) {
-      error = true;
-      setEditWebAddressError(true);
-    }
-    if(editRegNumber.length>64) {
-      error = true;
-      setEditRegNumberError(true);
+      setEditDeliveryAddressError(true);
     }
     if(error) {
       setIsSaving(false);
@@ -181,9 +170,7 @@ const Profile = () => {
           firstName: editFirstName,
           lastName: editLastName,
           address: editAddress,
-          description: editDescription,
-          webAddress: editWebAddress,
-          regNumber: editRegNumber,
+          deliveryAddress: editDeliveryAddress,
         });
         if(response.data.status==="ok"){
           saveImage();
@@ -430,65 +417,7 @@ const Profile = () => {
                   {editDuplicatePhoneError && <span className='form_error_floating'>Phone Already Exists !</span>}
                 </div>
               </div>
-              <div className='form_row_double'>
-                <div className='form_field_container'>
-                  <TextField 
-                    id='reg-number'
-                    label="Reg Number" 
-                    variant="outlined" 
-                    className='form_text_field' 
-                    value={editRegNumber} 
-                    error={editRegNumberError}
-                    onChange={event=>setEditRegNumber(event.target.value)}
-                    disabled={isSaving||isLoading || isViewOnly}
-                    onFocus={()=>setEditRegNumberError(false)}
-                    size='small' 
-                    inputProps={{style: {fontSize: 13}}}
-                    SelectProps={{style: {fontSize: 13}}}
-                    InputLabelProps={{style: {fontSize: 15}}}
-                  />
-                  {editRegNumberError && <span className='form_error_floating'>Invalid Reg Number</span>}
-                </div>
-                <div className='form_field_container'>
-                  <TextField 
-                    id='web-address'
-                    label="WebAddress" 
-                    variant="outlined" 
-                    className='form_text_field' 
-                    value={editWebAddress} 
-                    error={editWebAddressError}
-                    onChange={event=>setEditWebAddress(event.target.value)}
-                    disabled={isSaving||isLoading || isViewOnly}
-                    onFocus={()=>setEditWebAddressError(false)}
-                    size='small' 
-                    inputProps={{style: {fontSize: 13}}}
-                    SelectProps={{style: {fontSize: 13}}}
-                    InputLabelProps={{style: {fontSize: 15}}}
-                  />
-                  {editWebAddressError && <span className='form_error_floating'>Invalid Web Address</span>}
-                </div>
-              </div>
               <div className='form_row_double_top'>
-                <div className='form_field_container_vertical'>
-                  <TextField 
-                    id='description'
-                    label="Description" 
-                    variant="outlined" 
-                    className='form_text_field' 
-                    value={editDescription} 
-                    error={editDescriptionError}
-                    onChange={event=>setEditDescription(event.target.value)}
-                    disabled={isSaving||isLoading || isViewOnly}
-                    multiline={true}
-                    rows={4}
-                    onFocus={()=>setEditDescriptionError(false)}
-                    size='small' 
-                    inputProps={{style: {fontSize: 13}}}
-                    SelectProps={{style: {fontSize: 13}}}
-                    InputLabelProps={{style: {fontSize: 15}}}
-                  />
-                  {editDescriptionError && <span className='form_error_floating'>Invalid Description</span>}
-                </div>
                 <div className='form_field_container_vertical'>
                   <TextField 
                     id='address'
@@ -508,6 +437,37 @@ const Profile = () => {
                     InputLabelProps={{style: {fontSize: 15}}}
                   />
                   {editAddressError && <span className='form_error_floating'>Invalid Address</span>}
+                </div>
+                <div className='form_field_container_vertical'>
+                  <TextField 
+                    id='delivery-address'
+                    label="Delivery Address" 
+                    variant="outlined" 
+                    className='form_text_field' 
+                    value={editDeliveryAddress} 
+                    error={editDeliveryAddressError}
+                    onChange={event=>setEditDeliveryAddress(event.target.value)}
+                    disabled={isSaving||isLoading || isViewOnly}
+                    multiline={true}
+                    rows={4}
+                    onFocus={()=>setEditDeliveryAddressError(false)}
+                    size='small' 
+                    inputProps={{style: {fontSize: 13}}}
+                    SelectProps={{style: {fontSize: 13}}}
+                    InputLabelProps={{style: {fontSize: 15}}}
+                  />
+                  {!isViewOnly && <FormControlLabel 
+                    control={
+                      <Checkbox 
+                        id='same-address'
+                        checked={editSameAddress} 
+                        onChange={event=>setEditSameAddress(event.target.checked)}
+                        disabled={isLoading||isSaving}
+                      />
+                    } 
+                    label="Same Address"
+                  />}
+                  {editDeliveryAddressError && <span className='form_error_floating'>Invalid Delivery Address</span>}
                 </div>
               </div>
               <div className='form_row_double'>
