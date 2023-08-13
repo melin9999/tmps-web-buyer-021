@@ -22,6 +22,10 @@ body{
   @apply flex flex-col justify-start items-center py-3 bg-white w-full max-w-4xl shadow-md pt-5;
 }
 
+.form_container_xtra_large{
+  @apply flex flex-col justify-start items-center py-3 bg-white w-full max-w-6xl shadow-md pt-5;
+}
+
 
 
 
@@ -79,6 +83,22 @@ body{
 
 .form_fields_toolbar_container_right{
   @apply flex flex-row justify-end items-center gap-2 w-full sm:w-[360px];
+}
+
+.form_fields_toolbar_container_home{
+  @apply flex w-full flex-col sm:flex-row justify-between items-center mb-3 px-2;
+}
+
+.form_fields_toolbar_container_home_left{
+  @apply flex flex-row w-full sm:flex-1 max-w-[400px] mb-3 sm:mb-0 justify-start items-center gap-2;
+}
+
+.form_fields_toolbar_container_home_left_1{
+  @apply flex flex-row w-full sm:flex-1 max-w-[600px] mb-3 sm:mb-0 justify-start items-center gap-2;
+}
+
+.form_fields_toolbar_container_home_right{
+  @apply flex flex-row justify-end items-center gap-2 w-full sm:w-[400px];
 }
 
 .form_fields_container_fixed{
@@ -202,6 +222,14 @@ body{
   @apply flex justify-between items-center w-full rounded h-[38px] px-3 relative bg-white cursor-pointer;
 }
 .form_text_field_constructed:hover{
+  border: 1px solid #424242;
+}
+
+.form_text_field_constructed_home{
+  border: 1px solid #bdbdbd;
+  @apply flex justify-between items-center w-full rounded h-[35px] px-3 relative bg-white cursor-pointer;
+}
+.form_text_field_constructed_home:hover{
   border: 1px solid #424242;
 }
 
