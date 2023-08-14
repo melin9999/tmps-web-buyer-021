@@ -23,7 +23,7 @@ body{
 }
 
 .form_container_xtra_large{
-  @apply flex flex-col justify-start items-center py-3 bg-white w-full max-w-6xl shadow-md pt-5;
+  @apply flex flex-col justify-start items-center py-3 bg-white w-full max-w-6xl shadow-md;
 }
 
 
