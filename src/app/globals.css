@@ -73,6 +73,14 @@ body{
 
 
 
+.form_fields_toolbar_container_center{
+  @apply flex w-full flex-row justify-center items-center;
+}
+
+.form_fields_toolbar_container_center_search{
+  @apply flex w-full flex-row justify-center items-center px-2 gap-2 max-w-[600px];
+}
+
 .form_fields_toolbar_container{
   @apply flex w-full flex-col sm:flex-row justify-between items-center mb-3 px-2;
 }

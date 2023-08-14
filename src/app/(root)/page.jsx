@@ -1,11 +1,14 @@
 'use client';
 import { useSession } from 'next-auth/react';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from "axios";
 import useWindowDimensions from '@/hooks/useWindowDimension';
-import { ArrowDropDown, CalendarMonth, Close, FilterAlt, ImportExport, KeyboardArrowDown, KeyboardArrowLeft, KeyboardArrowRight, KeyboardArrowUp, Search } from '@mui/icons-material';
+import { ArrowDropDown, CalendarMonth, CameraAlt, Close, FilterAlt, ImportExport, KeyboardArrowDown, KeyboardArrowLeft, KeyboardArrowRight, KeyboardArrowUp, Search } from '@mui/icons-material';
 import { Button, CircularProgress, IconButton, InputAdornment, MenuItem, TextField, Typography } from '@mui/material';
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+import { Carousel } from 'react-responsive-carousel';
+import Image from 'next/image';
 
 const Home = () => {
   const router = useRouter();
@@ -14,34 +17,58 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [serverError, setServerError] = useState(false);
   const { width, height=500 } = useWindowDimensions();
-  const scrollRef = useRef();
   const [scrollTop, setScrollTop] = useState(0);
 
-  const [selectedRow, setSelectedRow] = useState(0);
-  const [filtersShowing, setFiltersShowing] = useState(false);
   const [searchDescription, setSearchDescription] = useState("");
-  const [searchStatus, setSearchStatus] = useState("active");
-  const [searchSortBy, setSearchSortBy] = useState("id");
-  const [searchOrder, setSearchOrder] = useState("ASC");
+  const [slides, setSlides] = useState([]);
 
-  const [searchRpp, setSearchRpp] = useState(30);
-  const [searchRowCount, setSearchRowCount] = useState(0);
-  const [searchNop, setSearchNop] = useState(1);
-  const [searchPage, setSearchPage] = useState(1);
-  const [searchData, setSearchData] = useState([]);
+  useEffect(() => {
+    setIsLoading(false);
+    getData();
+  }, []);
 
-  const [searchBrand, setSearchBrand] = useState({id: 0, description: "All"});
-  const [searchModel, setSearchModel] = useState({id: 0, description: "All", brandId: 0, brandDescription: "All"});
-  const [searchCategory, setSearchCategory] = useState({id: 0, description: "All"});
-  const [openBrand, setOpenBrand] = useState(false);
-  const [openModel, setOpenModel] = useState(false);
-  const [openCategory, setOpenCategory] = useState(false);
+  async function getData(){
+    setIsLoading(true);
+    try{
+      var error = false;
+      if(!error){
+        const response = await axios.post("/api/slides/active", {});
+        const values = [];
+        response.data.data.rows.map(val => {
+          var imageUrl = "";
+          if(val.image_url==="none"){
+            imageUrl = "none";
+          }
+          else{
+            imageUrl = "https://tm-web.techmax.lk/"+val.image_url;
+          }
+          values.push({
+            id: val.id,
+            description: val.description,
+            heading: val.heading,
+            sub_heading: val.sub_heading,
+            content: val.content,
+            v_position: val.v_position,
+            h_position: val.h_position,
+            image_url: imageUrl,
+          });
+        });
+        setSlides(values);
+      }
+    }
+    catch(error){
+      setSlides([]);
+    }
+    finally{
+      setIsLoading(false);
+    }
+  }
 
   return (
     <div className='form_container mt-10' style={{minHeight: (height-80)}}>
       <div className='form_container_xtra_large' style={{minHeight: (height-80)}}>
-        <div className='form_fields_toolbar_container_home pb-3 mt-5' style={{borderBottom: '1px solid #e8e8e8'}}>
-          <div className='form_fields_toolbar_container_home_left_1'>
+        <div className='form_fields_toolbar_container_center pb-3 mt-5' style={{borderBottom: '1px solid #e8e8e8'}}>
+          <div className='form_fields_toolbar_container_center_search'>
             <TextField 
               id='description'
               label="Search" 
@@ -67,117 +94,20 @@ const Home = () => {
               size='small'
               sx={{width: 110}}
             >Search</Button>
-            <Button 
-              variant='outlined' 
-              style={{textTransform: 'none'}} 
-              startIcon={<FilterAlt />}
-              endIcon={filtersShowing?<KeyboardArrowUp/>:<KeyboardArrowDown/>}
-              onClick={()=>setFiltersShowing((val)=>!val)}
-              sx={{width: 140}}
-              size='small'
-            >Filters</Button>
-          </div>
-          <div className='form_fields_toolbar_container_home_right'>
-            <IconButton aria-label="delete" size="small" onClick={()=>getSearchData(searchPage-1)}>
-              <KeyboardArrowLeft size={20} />
-            </IconButton>
-            <Typography sx={{fontSize: 12, color: "#444"}}>{`Page ${searchPage} of ${searchNop}`}</Typography>
-            <IconButton aria-label="delete" size="small" onClick={()=>getSearchData(searchPage+1)}>
-              <KeyboardArrowRight size={20} />
-            </IconButton>
-            <TextField
-              className='form_text_field_xtra_xtra_small'
-              id='rpp'
-              select={true}
-              value={searchRpp}
-              onChange={event=>setSearchRpp(event.target.value)} 
-              disabled={isLoading}
-              label='Rows'
-              size='small'
-              inputProps={{style: {fontSize: 13}}}
-              SelectProps={{style: {fontSize: 13}}}
-              InputLabelProps={{style: {fontSize: 15}}}
-              sx={{textAlign: 'right'}}
-            >
-              <MenuItem value={0}>All</MenuItem>
-              <MenuItem value={10}>10</MenuItem>
-              <MenuItem value={30}>30</MenuItem>
-              <MenuItem value={50}>50</MenuItem>
-              <MenuItem value={100}>100</MenuItem>
-            </TextField>
           </div>
         </div>
-        {filtersShowing && 
-          <div className='form_fields_toolbar_container_home pb-3 mt-3' style={{borderBottom: '1px solid #e8e8e8'}}>
-            <div className='form_fields_toolbar_container_home_left_1'>
-              <>
-                <div className='form_text_field_constructed_home cursor-pointer'>
-                  <span className='form_text_field_constructed_label'>Category</span>
-                  <span className='form_text_field_constructed_text' onClick={()=>setOpenCategory(true)}>{searchCategory.description}</span>
-                  <div className='form_text_field_constructed_actions'>
-                    <Close sx={{width: 20, height: 20, color: '#6b7280'}} onClick={()=>setSearchCategory({id: 0, description: "All"})}/>
-                    <ArrowDropDown sx={{width: 22, height: 22, color: '#6b7280'}} onClick={()=>setOpenCategory(true)}/>
-                  </div>
-                </div>
-                <div className='form_text_field_constructed_home cursor-pointer'>
-                  <span className='form_text_field_constructed_label'>Brand</span>
-                  <span className='form_text_field_constructed_text' onClick={()=>setOpenBrand(true)}>{searchBrand.description}</span>
-                  <div className='form_text_field_constructed_actions'>
-                    <Close sx={{width: 20, height: 20, color: '#6b7280'}} onClick={()=>setSearchBrand({id: 0, description: "All"})}/>
-                    <ArrowDropDown sx={{width: 22, height: 22, color: '#6b7280'}} onClick={()=>setOpenBrand(true)}/>
-                  </div>
-                </div>
-                <div className='form_text_field_constructed_home cursor-pointer'>
-                  <span className='form_text_field_constructed_label'>Model</span>
-                  <span className='form_text_field_constructed_text' onClick={()=>setOpenModel(true)}>{searchModel.description}</span>
-                  <div className='form_text_field_constructed_actions'>
-                    <Close sx={{width: 20, height: 20, color: '#6b7280'}} onClick={()=>setSearchModel({id: 0, description: "All", brandId: 0, brandDescription: "All"})}/>
-                    <ArrowDropDown sx={{width: 22, height: 22, color: '#6b7280'}} onClick={()=>setOpenModel(true)}/>
-                  </div>
-                </div>
-              </>
+        <Carousel showThumbs={false}>
+          {slides.map(val=>
+            <div className='relative' key={val.id}>
+              <img src={val.image_url} />
+              <div className="bg-zinc-800 absolute bottom-10 right-2 opacity-60 flex flex-col justify-start items-start px-2 py-2 rounded w-full max-w-[400px]">
+                <span className='text-white text-xl opacity-100 font-semibold'>{val.heading}</span>
+                <span className='text-white text-sm opacity-100 mb-2'>{val.sub_heading}</span>
+                <span className='text-white text-xs opacity-100 flex-wrap text-start'>{val.content}</span>
+              </div>
             </div>
-            <div className='form_fields_toolbar_container_home_right'>
-              <TextField
-                className='form_text_field_small'
-                id='sort-by-2'
-                select={true}
-                value={searchSortBy}
-                onChange={event=>setSearchSortBy(event.target.value)} 
-                disabled={isLoading}
-                label='Sort By'
-                size='small'
-                inputProps={{style: {fontSize: 13}}}
-                SelectProps={{style: {fontSize: 13}}}
-                InputLabelProps={{style: {fontSize: 15}}}
-              >
-                <MenuItem value={"id"}>ID</MenuItem>
-                <MenuItem value={"part_number"}>Part Number</MenuItem>
-                <MenuItem value={"description"}>Description</MenuItem>
-                <MenuItem value={"price"}>Price</MenuItem>
-              </TextField>
-              <TextField
-                className='form_text_field_small'
-                id='order'
-                select={true}
-                value={searchOrder}
-                onChange={event=>setSearchOrder(event.target.value)} 
-                disabled={isLoading}
-                label='Order'
-                size='small'
-                InputProps={{
-                  startAdornment: <InputAdornment position="start"><ImportExport sx={{width: 20, height: 20, color: '#666'}}/></InputAdornment>,
-                }}
-                inputProps={{style: {fontSize: 13}}}
-                SelectProps={{style: {fontSize: 13}}}
-                InputLabelProps={{style: {fontSize: 15}}}
-              >
-                <MenuItem value={"ASC"}>Ascending</MenuItem>
-                <MenuItem value={"DESC"}>Descending</MenuItem>
-              </TextField>
-            </div>
-          </div>
-        }
+          )}
+        </Carousel>
       </div>
     </div>
   )
