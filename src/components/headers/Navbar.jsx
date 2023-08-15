@@ -5,10 +5,9 @@ import { useRouter, usePathname } from 'next/navigation';
 const Navbar = () => {
   const router = useRouter();
   const pathname = usePathname();
-  console.log(pathname);
 
   return (
-    <div className='flex flex-row w-full justify-center items-center bg-emerald-700 gap-1 flex-wrap pt-[48px] pb-[3px]'>
+    <div className='flex flex-row w-full justify-center items-center bg-emerald-700 gap-1 flex-wrap pt-[48px] pb-[3px] max-w-6xl'>
       <Button variant='text' size='small'
         sx={{textTransform: 'none', backgroundColor: pathname==='/'?'#059669':'#047857', color: '#ffffff'}} 
         onClick={()=>router.push("/")}>Home</Button>

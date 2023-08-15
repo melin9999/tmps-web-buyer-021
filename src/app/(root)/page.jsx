@@ -6,9 +6,10 @@ import axios from "axios";
 import useWindowDimensions from '@/hooks/useWindowDimension';
 import { ArrowDropDown, CalendarMonth, CameraAlt, Close, FilterAlt, ImportExport, KeyboardArrowDown, KeyboardArrowLeft, KeyboardArrowRight, KeyboardArrowUp, Search } from '@mui/icons-material';
 import { Button, CircularProgress, IconButton, InputAdornment, MenuItem, TextField, Typography } from '@mui/material';
-import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
-import { Carousel } from 'react-responsive-carousel';
+//import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+//import { Carousel } from 'react-responsive-carousel';
 import Image from 'next/image';
+import HomeSlider from '@/components/sliders/HomeSlider';
 
 const Home = () => {
   const router = useRouter();
@@ -16,59 +17,20 @@ const Home = () => {
   const [statusLoading, setStatusLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [serverError, setServerError] = useState(false);
-  const { width, height=500 } = useWindowDimensions();
+  const { width=500, height=500 } = useWindowDimensions();
   const [scrollTop, setScrollTop] = useState(0);
 
   const [searchDescription, setSearchDescription] = useState("");
-  const [slides, setSlides] = useState([]);
   const [featured, setFeatured] = useState([]);
 
   useEffect(() => {
     setIsLoading(false);
-    getSlides();
     getFeatured();
   }, []);
 
   useEffect(() => {
     console.log(featured);
   }, [featured]);
-
-  async function getSlides(){
-    setIsLoading(true);
-    try{
-      var error = false;
-      if(!error){
-        const response = await axios.post("/api/slides/active", {});
-        const values = [];
-        response.data.data.rows.map(val => {
-          var imageUrl = "";
-          if(val.image_url==="none"){
-            imageUrl = "none";
-          }
-          else{
-            imageUrl = "https://tm-web.techmax.lk/"+val.image_url;
-          }
-          values.push({
-            id: val.id,
-            description: val.description,
-            heading: val.heading,
-            sub_heading: val.sub_heading,
-            content: val.content,
-            v_position: val.v_position,
-            h_position: val.h_position,
-            image_url: imageUrl,
-          });
-        });
-        setSlides(values);
-      }
-    }
-    catch(error){
-      setSlides([]);
-    }
-    finally{
-      setIsLoading(false);
-    }
-  }
 
   async function getFeatured(){
     setIsLoading(true);
@@ -122,22 +84,34 @@ const Home = () => {
     }
   }
 
+  {/* <div>
+    <img src={slides[0].image_url} style={{width: width<1152?width:1152}}/>
+    <div>
+      <span className='text-white text-xl opacity-100 font-semibold'>{slides[0].heading}</span>
+      <span className='text-white text-sm opacity-100 mb-2'>{slides[0].sub_heading}</span>
+      <span className='text-white text-xs opacity-100 flex-wrap text-start'>{slides[0].content}</span>
+    </div>
+  </div> */}
+
+
   return (
     <div className='form_container' style={{minHeight: (height-80)}}>
-      <div className='form_container_xtra_large' style={{minHeight: (height-80)}}>
-        <Carousel showThumbs={false}>
+      <div className='form_container_xtra_large pb-5' style={{minHeight: (height-80)}}>
+        <HomeSlider />
+        
+        {/* <Carousel showThumbs={false} autoPlay={true}>
           {slides.map(val=>
-            <div className='relative' key={val.id} style={{height: 300}}>
-              <img src={val.image_url} />
-              <div className="bg-zinc-800 absolute bottom-10 right-2 opacity-60 flex flex-col justify-start items-start px-2 py-2 rounded w-full max-w-[400px]">
+            <div className='relative' key={val.id} style={{height: 300, backgroundColor: 'yellow', maxWidth: 1152}}>
+              <img src={val.image_url} style={{width: width<1152?width:1152}} />
+              <div className="bg-zinc-800 opacity-60 flex flex-col justify-start items-start px-2 py-2 rounded w-full max-w-[400px] absolute bottom-5 right-5 z-50">
                 <span className='text-white text-xl opacity-100 font-semibold'>{val.heading}</span>
                 <span className='text-white text-sm opacity-100 mb-2'>{val.sub_heading}</span>
                 <span className='text-white text-xs opacity-100 flex-wrap text-start'>{val.content}</span>
               </div>
             </div>
           )}
-        </Carousel>
-        <div className='form_fields_toolbar_container_center pb-10 pt-10' style={{borderBottom: '1px solid #e8e8e8'}}>
+        </Carousel> */}
+        <div className='form_fields_toolbar_container_center pb-5 sm:pb-10 pt-5 sm:pt-10' style={{borderBottom: '1px solid #e8e8e8'}}>
           <div className='form_fields_toolbar_container_center_search'>
             <TextField 
               id='description'
