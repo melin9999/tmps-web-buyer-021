@@ -123,7 +123,7 @@ const Home = () => {
   }
 
   return (
-    <div className='form_container mt-10' style={{minHeight: (height-80)}}>
+    <div className='form_container' style={{minHeight: (height-80)}}>
       <div className='form_container_xtra_large' style={{minHeight: (height-80)}}>
         <Carousel showThumbs={false}>
           {slides.map(val=>
@@ -137,7 +137,7 @@ const Home = () => {
             </div>
           )}
         </Carousel>
-        <div className='form_fields_toolbar_container_center pb-3 mt-5' style={{borderBottom: '1px solid #e8e8e8'}}>
+        <div className='form_fields_toolbar_container_center pb-10 pt-10' style={{borderBottom: '1px solid #e8e8e8'}}>
           <div className='form_fields_toolbar_container_center_search'>
             <TextField 
               id='description'
@@ -160,7 +160,7 @@ const Home = () => {
               disabled={isLoading} 
               style={{textTransform: 'none'}} 
               startIcon={isLoading?<CircularProgress size={18} style={{'color': '#9ca3af'}}/>:<Search />}
-              onClick={()=>router.push('search/'+searchDescription)}
+              onClick={()=>router.push('/products/search/'+searchDescription===""?"all":searchDescription)}
               size='small'
               sx={{width: 110}}
             >Search</Button>
