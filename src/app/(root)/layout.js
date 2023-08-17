@@ -4,7 +4,7 @@ import Navbar from "@/components/headers/Navbar";
 
 export default function RootLayout({ children }) {
   return (
-    <div className="flex flex-col justify-center items-center w-full">
+    <div className="flex flex-col justify-center items-center w-full bg-slate-200">
       <MainHeader/>
       <Navbar/>
       {children}
