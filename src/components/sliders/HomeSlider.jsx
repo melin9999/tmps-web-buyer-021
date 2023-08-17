@@ -6,7 +6,6 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import { Button, CircularProgress } from '@mui/material';
-import { FamilyRestroomRounded } from '@mui/icons-material';
 
 function SampleNextArrow(props) {
   const { className, style, onClick, width } = props;
@@ -37,6 +36,7 @@ const HomeSlider = ({width}) => {
   const [slides, setSlides] = useState([]);
   var settings = {
     dots: true,
+    fade: true,
     autoplay: true,
     pauseOnFocus: true,
     pauseOnHover: true,

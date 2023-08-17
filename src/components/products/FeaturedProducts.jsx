@@ -92,7 +92,7 @@ const FeaturedProducts = ({width, limit}) => {
     try{
       var error = false;
       if(!error){
-        const response = await axios.post("/api/inventory/featured", {
+        const response = await axios.post("/api/featured/products", {
           limit: limit,
         });
         const values = [];

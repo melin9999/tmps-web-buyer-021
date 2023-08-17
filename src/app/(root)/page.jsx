@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import useWindowDimensions from '@/hooks/useWindowDimension';
 import { KeyboardArrowRight } from '@mui/icons-material';
@@ -21,6 +21,14 @@ const Home = () => {
   const searchClicked = () => {
     router.push('/products/search/dddddd/')
   }
+
+  useEffect(() => {
+    /* console.log("Description :"+searchDescription);
+    console.log("Brand :"+searchBrand.description);
+    console.log("Model :"+searchModel.description);
+    console.log("Category :"+searchCategory.description); */
+  }, [searchDescription, searchBrand, searchModel, searchCategory]);
+  
 
   return (
     <div className='form_container' style={{minHeight: (height-80)}}>
