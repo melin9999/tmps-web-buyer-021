@@ -8,7 +8,7 @@ import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
 function SampleNextArrow(props) {
   const { className, style, onClick } = props;
   return (
-    <div className='flex flex-col justify-center items-center w-[24px] h-[24px] rounded-[12px] bg-gray-300 opacity-50 cursor-pointer' onClick={onClick} style={{position: 'absolute', top: '50%', right: 7, zIndex: 50}}>
+    <div className='flex flex-col justify-center items-center w-[24px] h-[24px] rounded-[12px] bg-gray-300 opacity-50 cursor-pointer' onClick={onClick} style={{position: 'absolute', top: '50%', right: 7, zIndex: 20}}>
       <KeyboardArrowRight/>
     </div>
   );
@@ -17,7 +17,7 @@ function SampleNextArrow(props) {
 function SamplePrevArrow(props) {
   const { onClick } = props;
   return (
-    <div className='flex flex-col justify-center items-center w-[24px] h-[24px] rounded-[12px] bg-gray-300 opacity-50 cursor-pointer' onClick={onClick} style={{position: 'absolute', top: '50%', left: 7, zIndex: 50}}>
+    <div className='flex flex-col justify-center items-center w-[24px] h-[24px] rounded-[12px] bg-gray-300 opacity-50 cursor-pointer' onClick={onClick} style={{position: 'absolute', top: '50%', left: 7, zIndex: 20}}>
       <KeyboardArrowLeft/>
     </div>
   );
@@ -43,7 +43,7 @@ const FeaturedProducts = ({width, limit}) => {
     slidesToShow: numberOfSlides,
     slidesToScroll: slidesToScroll,
     infinite: true,
-    speed: 2000,
+    speed: 4000,
     nextArrow: <SampleNextArrow />,
     prevArrow: <SamplePrevArrow />,
   };

@@ -96,7 +96,7 @@ body{
 
 
 .form_fields_toolbar_container_home{
-  @apply flex w-full flex-col-reverse lg:flex-row justify-center lg:justify-between items-center lg:items-center px-2 py-5 bg-blue-300;
+  @apply flex w-full flex-col-reverse lg:flex-row justify-center lg:justify-between items-center lg:items-center px-2 pt-5 pb-2 sm:pb-5 bg-white;
 }
 
 .form_fields_toolbar_container_home_left{
@@ -104,19 +104,19 @@ body{
 }
 
 .form_fields_toolbar_container_home_left_1{
-  @apply flex flex-row w-full lg:w-[560px] bg-yellow-300 justify-start lg:justify-end items-center;
+  @apply flex flex-row w-full lg:w-[560px] justify-start lg:justify-end items-center;
 }
 
 .form_fields_toolbar_container_home_left_1_container{
-  @apply flex flex-row justify-center items-center gap-2 w-full sm:w-[560px] bg-yellow-600 flex-wrap xs:flex-nowrap;
+  @apply flex flex-row justify-start sm:justify-center items-center gap-2 w-full sm:w-[560px] flex-wrap sm:flex-nowrap;
 }
 
 .form_fields_toolbar_container_home_right{
-  @apply flex flex-row w-full lg:w-[350px] bg-pink-300 justify-start lg:justify-end items-center mb-4 lg:mb-0;
+  @apply flex flex-row w-full lg:w-[350px] justify-start lg:justify-end items-center mb-4 lg:mb-0;
 }
 
 .form_fields_toolbar_container_home_right_container{
-  @apply flex flex-row justify-center items-center gap-2 w-full sm:w-[560px] lg:w-[350px] bg-pink-600;
+  @apply flex flex-row justify-center items-center gap-2 w-full sm:w-[560px] lg:w-[350px];
 }
 
 .form_fields_container_fixed{
@@ -245,7 +245,7 @@ body{
 
 .form_text_field_constructed_home{
   border: 1px solid #bdbdbd;
-  @apply flex justify-between items-center w-full min-w-[120px] rounded h-[35px] px-3 relative bg-white cursor-pointer;
+  @apply flex justify-between items-center w-[100%] xxs:w-[48.5%] xs:w-[49%] sm:w-full min-w-[120px] rounded h-[35px] px-3 relative bg-white cursor-pointer mb-2 sm:mb-0;
 }
 .form_text_field_constructed_home:hover{
   border: 1px solid #424242;

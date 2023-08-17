@@ -2,7 +2,6 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import axios from "axios";
-import useWindowDimensions from '@/hooks/useWindowDimension';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
@@ -10,32 +9,31 @@ import { Button, CircularProgress } from '@mui/material';
 import { FamilyRestroomRounded } from '@mui/icons-material';
 
 function SampleNextArrow(props) {
-  const { className, style, onClick } = props;
+  const { className, style, onClick, width } = props;
   return (
     <div
       className={className}
-      style={{...style, position: 'absolute', top: '50%', right: 7, zIndex: 50}}
+      style={{...style, position: 'absolute', top: width>=768?'50%':'25%', right: 7, zIndex: 50}}
       onClick={onClick}
     />
   );
 }
 
 function SamplePrevArrow(props) {
-  const { className, style, onClick } = props;
+  const { className, style, onClick, width } = props;
   return (
     <div
       className={className}
-      style={{...style, position: 'absolute', top: '50%', left: 7, zIndex: 50}}
+      style={{...style, position: 'absolute', top: width>=768?'50%':'25%', left: 7, zIndex: 50}}
       onClick={onClick}
     />
   );
 }
 
-const HomeSlider = () => {
+const HomeSlider = ({width}) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [serverError, setServerError] = useState(false);
-  const { width=500, height=200 } = useWindowDimensions();
   const [slides, setSlides] = useState([]);
   var settings = {
     dots: true,
@@ -46,9 +44,9 @@ const HomeSlider = () => {
     slidesToShow: 1,
     slidesToScroll: 1,
     infinite: true,
-    speed: 1000,
-    nextArrow: <SampleNextArrow />,
-    prevArrow: <SamplePrevArrow />,
+    speed: 3000,
+    nextArrow: <SampleNextArrow width={width} />,
+    prevArrow: <SamplePrevArrow width={width} />,
     dots: false,
   };
 
@@ -57,12 +55,12 @@ const HomeSlider = () => {
   }, []);
 
   async function getSlides(){
-    setServerError(FamilyRestroomRounded);
-    setIsLoading(true);
     try{
+      setServerError(false);
+      setIsLoading(true);
       var error = false;
       if(!error){
-        const response = await axios.post("/api/slides/active", {});
+        const response = await axios.post("/api/supportdata/slides/", {});
         const values = [];
         response.data.data.rows.map(val => {
           var imageUrl = "";
@@ -156,10 +154,10 @@ const HomeSlider = () => {
               <div className='flex flex-col w-full lg:max-w-[600px] lg:opacity-70 px-2 py-2' style={width<1024?{backgroundColor: val.position.backgroundColor}:val.position}>
                 <span className='opacity-100 font-bold text-sm h-[20px] overflow-hidden' style={{color: val.styles.headingColor}}>{val.heading}</span>
                 {val.sub_heading===""?
-                  <span className='mb-2 h-[7px]' style={{borderBottom: '1px solid #D1D5DB'}}></span>:
+                  <span className='mb-2 h-[20px]' style={{borderBottom: '1px solid #D1D5DB'}}></span>:
                   <span className='opacity-100 font-bold text-xs mb-2 h-[20px] overflow-hidden' style={{color: val.styles.subHeadingColor, borderBottom: '1px solid #D1D5DB'}}>{val.sub_heading}</span>
                 }
-                <span className='flex opacity-100 font-bold text-[12px] h-[60px] overflow-hidden' style={{color: val.styles.contentColor}}>{val.content}</span>
+                <span className='flex opacity-100 font-bold text-[12px] h-[57px] text-justify overflow-hidden' style={{color: val.styles.contentColor}}>{val.content}</span>
                 {val.link!=="" && 
                   <div className='flex flex-row justify-end items-center mt-3'>
                     <Button size='small' variant='outlined' onClick={()=>router.push(val.link)}>{"Learn More..."}</Button>
