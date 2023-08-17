@@ -8,7 +8,7 @@ import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
 function SampleNextArrow(props) {
   const { className, style, onClick } = props;
   return (
-    <div className='flex flex-col justify-center items-center w-[24px] h-[24px] rounded-[12px] bg-gray-300 opacity-50 cursor-pointer' onClick={onClick} style={{position: 'absolute', top: '50%', right: 7, zIndex: 20}}>
+    <div className='flex flex-col justify-center items-center w-[24px] h-[24px] rounded-[12px] bg-gray-300 opacity-50 cursor-pointer' onClick={onClick} style={{position: 'absolute', top: '50%', right: 12, zIndex: 20}}>
       <KeyboardArrowRight/>
     </div>
   );
@@ -17,7 +17,7 @@ function SampleNextArrow(props) {
 function SamplePrevArrow(props) {
   const { onClick } = props;
   return (
-    <div className='flex flex-col justify-center items-center w-[24px] h-[24px] rounded-[12px] bg-gray-300 opacity-50 cursor-pointer' onClick={onClick} style={{position: 'absolute', top: '50%', left: 7, zIndex: 20}}>
+    <div className='flex flex-col justify-center items-center w-[24px] h-[24px] rounded-[12px] bg-gray-300 opacity-50 cursor-pointer' onClick={onClick} style={{position: 'absolute', top: '50%', left: 12, zIndex: 20}}>
       <KeyboardArrowLeft/>
     </div>
   );
@@ -43,7 +43,7 @@ const FeaturedProducts = ({width, limit}) => {
     slidesToShow: numberOfSlides,
     slidesToScroll: slidesToScroll,
     infinite: true,
-    speed: 4000,
+    speed: 5000,
     nextArrow: <SampleNextArrow />,
     prevArrow: <SamplePrevArrow />,
   };
@@ -54,19 +54,19 @@ const FeaturedProducts = ({width, limit}) => {
 
   useEffect(() => {
     if(width>=1152){
-      setItemWidth((1152/5));
+      setItemWidth((1100/5));
       setNumberOfSlides(5);
       setSlidesToScroll(3);
       setVerticalMode(false);
     }
     else if(width>=1024 && width<1152){
-      setItemWidth((width/4)-7);
+      setItemWidth((width/4)-15);
       setNumberOfSlides(4);
       setSlidesToScroll(2);
       setVerticalMode(false);
     }
     else if(width>=640 && width<1024){
-      setItemWidth((width/3)-7);
+      setItemWidth((width/3)-15);
       setNumberOfSlides(3);
       setSlidesToScroll(1);
       setVerticalMode(false);
@@ -156,7 +156,7 @@ const FeaturedProducts = ({width, limit}) => {
   }
 
   return (
-    <div className='bg-slate-200 relative' style={{width: width>=1152?1152:(width-15), marginLeft: -3, marginRight: -2, paddingLeft: -5, paddingRight: -5, overflow: 'hidden'}}>
+    <div className='bg-slate-200 relative' style={{width: width>=1152?1152:(width), marginLeft: -3, marginRight: -2, paddingLeft: -5, paddingRight: -5, overflow: 'hidden'}}>
       {isLoading?
         <div className='flex flex-col items-center justify-center w-full h-[300px] lg:h-[300px] sm:h-[250px] xs:h-[150px] bg-slate-200'>
           <CircularProgress size={30} style={{color:"#71717a"}} />

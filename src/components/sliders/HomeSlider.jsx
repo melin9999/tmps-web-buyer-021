@@ -44,7 +44,7 @@ const HomeSlider = ({width}) => {
     slidesToShow: 1,
     slidesToScroll: 1,
     infinite: true,
-    speed: 3000,
+    speed: 7000,
     nextArrow: <SampleNextArrow width={width} />,
     prevArrow: <SamplePrevArrow width={width} />,
     dots: false,
