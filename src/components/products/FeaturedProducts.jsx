@@ -72,13 +72,13 @@ const FeaturedProducts = ({width, limit}) => {
       setVerticalMode(false);
     }
     else if(width>=440 && width<640){
-      setItemWidth((width));
+      setItemWidth((width-20));
       setNumberOfSlides(3);
       setSlidesToScroll(2);
       setVerticalMode(true);
     }
     else{
-      setItemWidth((width));
+      setItemWidth((width-20));
       setNumberOfSlides(3);
       setSlidesToScroll(2);
       setVerticalMode(true);
@@ -156,9 +156,9 @@ const FeaturedProducts = ({width, limit}) => {
   }
 
   return (
-    <div className='bg-slate-200 relative' style={{width: width>=1152?1152:(width), marginLeft: -3, marginRight: -2, paddingLeft: -5, paddingRight: -5, overflow: 'hidden'}}>
+    <div className='bg-slate-200 relative' style={{width: width>=1152?1140:(width-20), marginLeft: -3, marginRight: -2, paddingLeft: -5, paddingRight: -5, overflow: 'hidden'}}>
       {isLoading?
-        <div className='flex flex-col items-center justify-center w-full h-[300px] lg:h-[300px] sm:h-[250px] xs:h-[150px] bg-slate-200'>
+        <div className='flex flex-col items-center justify-center w-full h-[300px] lg:h-[300px] sm:h-[250px] xs:h-[150px] bg-white'>
           <CircularProgress size={30} style={{color:"#71717a"}} />
           <span className="text-sm mt-5 font-semibold text-gray-700">Loading...</span>
         </div>:

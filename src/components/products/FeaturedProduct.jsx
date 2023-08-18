@@ -23,14 +23,14 @@ const FeaturedProduct = ({itemWidth, val, vertical}) => {
               </div>
               <div className='flex flex-row justify-end items-end w-full py-1 px-2 pb-1'>
                 {parseFloat(val.discount)>0.0 ?
-                  <div className='flex flex-col justify-center items-end w-[130px] mr-3'>
+                  <div className='flex flex-col justify-center items-end w-[70px] xs:w-[110px] mr-3'>
                     <span className='text-[10px] font-bold text-red-400'>{val.discount+"% off"}</span>
                     <span className='text-[11px] font-semibold text-zinc-600 line-through'>{"Rs. "+parseFloat(val.price).toFixed(2)}</span>
                   </div>:<div></div>
                 }
-                <div className='flex flex-row justify-between items-center px-2 py-1 w-[130px] h-[30px]' style={{border: '1px solid #10B981'}}>
-                  <span className='font-semibold text-xs text-emerald-600'>{"Rs."}</span>
-                  <span className='text-xs font-semibold text-emerald-600'>{parseFloat(val.discounted_price).toFixed(2)}</span>
+                <div className='flex flex-row justify-between items-center px-2 py-1 w-[90px] xs:w-[130px] h-[30px]' style={{border: '1px solid #10B981'}}>
+                  <span className='font-semibold text-[10px] xs:text-xs text-emerald-600'>{"Rs."}</span>
+                  <span className='text-[11px] xs:text-xs font-semibold text-emerald-600'>{parseFloat(val.discounted_price).toFixed(2)}</span>
                 </div>
               </div>
             </div>
