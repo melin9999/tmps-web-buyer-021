@@ -34,7 +34,7 @@ const FeaturedProducts = ({width, limit}) => {
   const [verticalMode, setVerticalMode] = useState(false);
 
   var settings = {
-    autoplay: true,
+    autoplay: false,
     pauseOnFocus: true,
     pauseOnHover: true,
     dots: false,
@@ -43,7 +43,7 @@ const FeaturedProducts = ({width, limit}) => {
     slidesToShow: numberOfSlides,
     slidesToScroll: slidesToScroll,
     infinite: true,
-    speed: 5000,
+    speed: 1000,
     nextArrow: <SampleNextArrow />,
     prevArrow: <SamplePrevArrow />,
   };
@@ -68,7 +68,7 @@ const FeaturedProducts = ({width, limit}) => {
     else if(width>=640 && width<1024){
       setItemWidth((width/3)-15);
       setNumberOfSlides(3);
-      setSlidesToScroll(1);
+      setSlidesToScroll(2);
       setVerticalMode(false);
     }
     else if(width>=440 && width<640){
@@ -156,7 +156,7 @@ const FeaturedProducts = ({width, limit}) => {
   }
 
   return (
-    <div className='bg-slate-200 relative' style={{width: width>=1152?1140:(width-20), marginLeft: -3, marginRight: -2, paddingLeft: -5, paddingRight: -5, overflow: 'hidden'}}>
+    <div className='bg-slate-200 relative py-3' style={{width: width>=1152?1140:(width-20), marginLeft: -3, marginRight: -2, paddingLeft: -5, paddingRight: -5, overflow: 'hidden'}}>
       {isLoading?
         <div className='flex flex-col items-center justify-center w-full h-[300px] lg:h-[300px] sm:h-[250px] xs:h-[150px] bg-white'>
           <CircularProgress size={30} style={{color:"#71717a"}} />

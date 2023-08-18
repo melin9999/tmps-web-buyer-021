@@ -7,10 +7,11 @@ import { Button } from '@mui/material';
 import HomeSlider from '@/components/sliders/HomeSlider';
 import FeaturedProducts from '@/components/products/FeaturedProducts';
 import HomeSearch from '@/components/toolbars/HomeSearch';
+import FeaturedCategories from '@/components/categories/FeaturedCategories';
 
 const Home = () => {
   const router = useRouter();
-  const { width=500, height=500 } = useWindowDimensions();
+  const { width=100, height=500 } = useWindowDimensions();
   const [scrollTop, setScrollTop] = useState(0);
 
   const [searchDescription, setSearchDescription] = useState("");
@@ -38,9 +39,23 @@ const Home = () => {
           searchBrand={searchBrand} setSearchBrand={setSearchBrand} searchModel={searchModel} 
           setSearchModel={setSearchModel} searchDescription={searchDescription} 
           setSearchDescription={setSearchDescription} searchClicked={searchClicked} width={width}/>
-        <div className='py-5 bg-slate-200 w-full'>
-          <div className='flex flex-row justify-between items-center w-full py-3 bg-white mb-3 px-2'>
-            <span className='text-xl font-semibold text-emerald-700'>Featured</span>
+        <div className='bg-white w-full mt-3 pt-2'>
+          <div className='flex flex-row justify-between items-center w-full py-2 bg-white px-1 xs:px-2'>
+            <span className='text-sm xs:text-md md:text-xl font-semibold text-emerald-700'>Categories</span>
+            <Button 
+              variant='text' 
+              style={{textTransform: 'none'}} 
+              endIcon={<KeyboardArrowRight />}
+              onClick={()=>router.push('/categories')}
+              size='small'
+              sx={{width: 110}}
+            >Show All</Button>
+          </div>
+          <FeaturedCategories limit={20} width={width}/>
+        </div>
+        <div className='bg-white w-full mt-3 pt-2'>
+          <div className='flex flex-row justify-between items-center w-full py-2 bg-white px-1 xs:px-2'>
+            <span className='text-sm xs:text-md md:text-xl font-semibold text-emerald-700'>Featured</span>
             <Button 
               variant='text' 
               style={{textTransform: 'none'}} 

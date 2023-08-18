@@ -104,7 +104,7 @@ body{
 }
 
 .form_fields_toolbar_container_home_left_1{
-  @apply flex flex-row w-full lg:w-[560px] justify-start lg:justify-end items-center;
+  @apply flex flex-row w-full lg:w-[560px] justify-center lg:justify-end items-center;
 }
 
 .form_fields_toolbar_container_home_left_1_container{
@@ -112,7 +112,7 @@ body{
 }
 
 .form_fields_toolbar_container_home_right{
-  @apply flex flex-row w-full lg:w-[350px] justify-start lg:justify-end items-center mb-4 lg:mb-0;
+  @apply flex flex-row w-full lg:w-[350px] justify-center lg:justify-end items-center mb-4 lg:mb-0;
 }
 
 .form_fields_toolbar_container_home_right_container{

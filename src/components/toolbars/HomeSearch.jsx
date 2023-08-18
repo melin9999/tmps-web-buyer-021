@@ -120,7 +120,6 @@ const HomeSearch = ({searchCategory, setSearchCategory, searchBrand, setSearchBr
             add = true;
           }
           if(add){
-            var imageUrl = "";
             if(val.image_url==="none"){
               imageUrl = "none";
             }
@@ -147,18 +146,21 @@ const HomeSearch = ({searchCategory, setSearchCategory, searchBrand, setSearchBr
   }
 
   return (
-    <div className='form_fields_toolbar_container_home mt-5 w-full' style={{borderBottom: '1px solid #e8e8e8'}}>
-      <div className='form_fields_toolbar_container_home_left_1'>
-        <div className='form_fields_toolbar_container_home_left_1_container relative'>
-          {width>=640 && <span ref={categoryRef} className='w-[0px] h-[30px] absolute top-5 left-0'/>}
-          {width>=640 && <span ref={brandRef} className='w-[0px] h-[30px] absolute top-5 left-0'/>}
-          {width>=640 && <span ref={modelRef} className='w-[0px] h-[30px] absolute top-5 left-0'/>}
-          {width>=320 && width<640 && <span ref={categoryRef} className='w-[0px] h-[30px] absolute top-2 left-0'/>}
-          {width>=320 && width<640 && <span ref={brandRef} className='w-[0px] h-[30px] absolute top-2 left-0'/>}
-          {width>=320 && width<640 && <span ref={modelRef} className='w-[0px] h-[30px] absolute top-[60px] left-0'/>}
-          {width<320 && <span ref={categoryRef} className='w-[0px] h-[30px] absolute top-2 left-0'/>}
-          {width<320 && <span ref={brandRef} className='w-[0px] h-[30px] absolute top-[60px] left-0'/>}
-          {width<320 && <span ref={modelRef} className='w-[0px] h-[30px] absolute top-[110px] left-0'/>}
+    <div className='form_fields_toolbar_container_home mt-3 w-full' style={{borderBottom: '1px solid #e8e8e8'}}>
+      <div className='form_fields_toolbar_container_home_left_1 relative'>
+        {width>=768 && <span ref={categoryRef} className='w-[0px] h-[30px] absolute top-5 -left-1'/>}
+        {width>=768 && <span ref={brandRef} className='w-[0px] h-[30px] absolute top-5 -left-1'/>}
+        {width>=768 && <span ref={modelRef} className='w-[0px] h-[30px] absolute top-5 -left-1'/>}
+        {width>=640 && width<768 && <span ref={categoryRef} className='w-[0px] h-[30px] absolute top-2 -left-0'/>}
+        {width>=640 && width<768 && <span ref={brandRef} className='w-[0px] h-[30px] absolute top-2 -left-0'/>}
+        {width>=640 && width<768 && <span ref={modelRef} className='w-[0px] h-[30px] absolute top-[60px] -left-0'/>}
+        {width>=320 && width<640 && <span ref={categoryRef} className='w-[0px] h-[30px] absolute top-2 left-0'/>}
+        {width>=320 && width<640 && <span ref={brandRef} className='w-[0px] h-[30px] absolute top-2 left-0'/>}
+        {width>=320 && width<640 && <span ref={modelRef} className='w-[0px] h-[30px] absolute top-[60px] left-0'/>}
+        {width<320 && <span ref={categoryRef} className='w-[0px] h-[30px] absolute top-2 left-0'/>}
+        {width<320 && <span ref={brandRef} className='w-[0px] h-[30px] absolute top-[60px] left-0'/>}
+        {width<320 && <span ref={modelRef} className='w-[0px] h-[30px] absolute top-[110px] left-0'/>}
+        <div className='form_fields_toolbar_container_home_left_1_container'>
           <div className='form_text_field_constructed_home cursor-pointer'>
             <span className='form_text_field_constructed_label'>Category</span>
             <span className='form_text_field_constructed_text' onClick={()=>setOpenCategory(val=>!val)}>{searchCategory.description}</span>
@@ -175,14 +177,14 @@ const HomeSearch = ({searchCategory, setSearchCategory, searchBrand, setSearchBr
             >
               {({TransitionProps}) => (
                 <Grow {...TransitionProps}>
-                  <Paper className='flex flex-col' style={{width: width>=1152?1152:(width-30)}}>
+                  <Paper className='flex flex-col' style={{width: width>=1152?1122:(width-30)}}>
                     <ClickAwayListener onClickAway={()=>setOpenCategory(false)}>
                       {isLoading1 ? 
                         <div className='flex flex-col items-center justify-center w-full min-h-[200px] lg:h-[300px] sm:h-[250px] xs:h-[150px] bg-slate-100 shadow-xl'>
                           <CircularProgress size={30} style={{color:"#71717a"}} />
                           <span className="text-sm mt-5 font-semibold text-gray-700">{"Loading..."}</span>
                         </div>:
-                        <div className='flex flex-col justify-start items-start w-full pb-2 px-3 bg-slate-100 shadow-xl'>
+                        <div className='flex flex-col justify-start items-start w-full pb-2 px-3 bg-white shadow-xl'>
                           <div className='flex flex-row justify-between items-center w-full py-2' style={{borderBottom: '1px solid #D1D5DB'}}>
                             <span className='text-md font-semibold text-emerald-700'>{"Categories"}</span>
                             <IconButton onClick={()=>setOpenCategory(false)} sx={{width: 30, height: 30, borderRadius: 15, color: '#fff', backgroundColor: '#9CA3AF'}}><Close sx={{width: 20, height: 20, color: '#ffffff'}}/></IconButton>
@@ -224,14 +226,14 @@ const HomeSearch = ({searchCategory, setSearchCategory, searchBrand, setSearchBr
             >
               {({TransitionProps}) => (
                 <Grow {...TransitionProps}>
-                  <Paper className='flex flex-col' style={{width: width>=1152?1152:(width-30)}}>
+                  <Paper className='flex flex-col' style={{width: width>=1152?1122:(width-30)}}>
                     <ClickAwayListener onClickAway={()=>setOpenBrand(false)}>
                       {isLoading2 ? 
                         <div className='flex flex-col items-center justify-center w-full h-[300px] lg:h-[300px] sm:h-[250px] xs:h-[150px] bg-slate-100 shadow-xl'>
                           <CircularProgress size={30} style={{color:"#71717a"}} />
                           <span className="text-sm mt-5 font-semibold text-gray-700">Loading...</span>
                         </div>:
-                        <div className='flex flex-col justify-start items-start w-full pb-2 px-3 bg-slate-100 shadow-xl'>
+                        <div className='flex flex-col justify-start items-start w-full pb-2 px-3 bg-white shadow-xl'>
                           <div className='flex flex-row justify-between items-center w-full py-2' style={{borderBottom: '1px solid #D1D5DB'}}>
                             <span className='text-md font-semibold text-emerald-700'>{"Brands"}</span>
                             <IconButton onClick={()=>setOpenBrand(false)} sx={{width: 30, height: 30, borderRadius: 15, color: '#fff', backgroundColor: '#9CA3AF'}}><Close sx={{width: 20, height: 20, color: '#ffffff'}}/></IconButton>
@@ -273,14 +275,14 @@ const HomeSearch = ({searchCategory, setSearchCategory, searchBrand, setSearchBr
             >
               {({TransitionProps}) => (
                 <Grow {...TransitionProps}>
-                  <Paper className='flex flex-col' style={{width: width>=1152?1152:(width-30)}}>
+                  <Paper className='flex flex-col' style={{width: width>=1152?1122:(width-30)}}>
                     <ClickAwayListener onClickAway={()=>setOpenModel(false)}>
                       {isLoading3 ? 
                         <div className='flex flex-col items-center justify-center w-full h-[300px] lg:h-[300px] md:h-[200px] sm:h-[200px] xs:h-[150px] bg-slate-100 shadow-xl'>
                           <CircularProgress size={30} style={{color:"#71717a"}} />
                           <span className="text-sm mt-5 font-semibold text-gray-700">Loading...</span>
                         </div>:
-                        <div className='flex flex-col justify-start items-start w-full pb-2 px-3 bg-slate-100 shadow-xl'>
+                        <div className='flex flex-col justify-start items-start w-full pb-2 px-3 bg-white shadow-xl'>
                           <div className='flex flex-row justify-between items-center w-full py-2' style={{borderBottom: '1px solid #D1D5DB'}}>
                             <div className='flex flex-row justify-center items-center'>
                               <span className='text-md font-semibold text-emerald-700'>{"Models"}</span>
