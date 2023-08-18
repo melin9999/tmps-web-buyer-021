@@ -1,7 +1,7 @@
 import { CameraAlt } from "@mui/icons-material";
 import Image from "next/image";
 
-const FeaturedCategory = ({itemWidth, val, vertical}) => {
+const FeaturedBrand = ({itemWidth, val, vertical}) => {
   return (
     <>
       {vertical?
@@ -34,7 +34,7 @@ const FeaturedCategory = ({itemWidth, val, vertical}) => {
             <span className='flex flex-col w-full text-xs sm:text-sm opacity-100 font-semibold break-words h-[50px] py-2 overflow-hidden px-2' style={{borderBottom: '1px solid #60A5FA'}}>{val.description}</span>
             <div className='flex flex-row justify-between items-end w-full px-2 my-2'>
               <span></span>
-              <span className='text-xs sm:text-sm py-1 font-semibold text-blue-400'>{val.count+" items"}</span>
+              <span className='text-xs sm:text-sm py-2 font-semibold text-blue-400'>{val.count+" items"}</span>
             </div>
           </div>
         </div>
@@ -43,4 +43,4 @@ const FeaturedCategory = ({itemWidth, val, vertical}) => {
   )
 }
 
-export default FeaturedCategory;
+export default FeaturedBrand;

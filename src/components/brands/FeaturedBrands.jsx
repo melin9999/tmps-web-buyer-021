@@ -3,7 +3,7 @@ import axios from "axios";
 import { CircularProgress } from '@mui/material';
 import Slider from 'react-slick';
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
-import FeaturedCategory from './FeaturedCategory';
+import FeaturedBrand from './FeaturedBrand';
 
 function SampleNextArrow(props) {
   const { className, style, onClick } = props;
@@ -23,7 +23,7 @@ function SamplePrevArrow(props) {
   );
 }
 
-const FeaturedCategories = ({width, limit}) => {
+const FeaturedBrands = ({width, limit}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [serverError, setServerError] = useState(false);
 
@@ -98,7 +98,7 @@ const FeaturedCategories = ({width, limit}) => {
     try{
       var error = false;
       if(!error){
-        const response = await axios.post("/api/featured/categories", {
+        const response = await axios.post("/api/featured/brands", {
           limit: limit,
         });
         const values = [];
@@ -107,11 +107,11 @@ const FeaturedCategories = ({width, limit}) => {
         data.map(val => {
           ++index;
           var imageUrl = "";
-          if(val.part_category.image_url==="none"){
+          if(val.brand.image_url==="none"){
             imageUrl = "none";
           }
           else{
-            imageUrl = "https://tm-web.techmax.lk/"+val.part_category.image_url;
+            imageUrl = "https://tm-web.techmax.lk/"+val.brand.image_url;
           }
           var last = false;
           if((index%numberOfSlides)===0){
@@ -119,8 +119,8 @@ const FeaturedCategories = ({width, limit}) => {
           }
           values.push({
             index: index,
-            id: val.part_category.id,
-            description: val.part_category.description,
+            id: val.brand.id,
+            description: val.brand.description,
             image_url: imageUrl,
             count: val.count,
             last: last,
@@ -146,7 +146,7 @@ const FeaturedCategories = ({width, limit}) => {
         </div>:
         <Slider {...settings}>
           {featured.map((val)=>
-            <FeaturedCategory key={val.id} val={val} itemWidth={itemWidth} vertical={verticalMode}/>
+            <FeaturedBrand key={val.id} val={val} itemWidth={itemWidth} vertical={verticalMode}/>
           )}
         </Slider>
       }
@@ -154,4 +154,4 @@ const FeaturedCategories = ({width, limit}) => {
   )
 }
 
-export default FeaturedCategories;
+export default FeaturedBrands;

@@ -45,7 +45,7 @@ const HomeSlider = ({width}) => {
     slidesToScroll: 1,
     infinite: true,
     speed: 500,
-    
+    autoplaySpeed: 6000,
     nextArrow: <SampleNextArrow width={width} />,
     prevArrow: <SamplePrevArrow width={width} />,
     dots: false,
@@ -128,6 +128,8 @@ const HomeSlider = ({width}) => {
             v_position: val.v_position,
             h_position: val.h_position,
             image_url: imageUrl,
+            show_caption: val.show_caption,
+            status: val.status,
           });
         });
         setSlides(values);
@@ -152,19 +154,21 @@ const HomeSlider = ({width}) => {
           {slides.map(val=>
             <div key={val.id} className='flex flex-col justify-center items-center relative my-0'>
               <img src={val.image_url} style={{margin: 0, width: width>1152?(1152):(width)}}/>
-              <div className='flex flex-col w-full lg:max-w-[600px] lg:opacity-70 px-2 py-2' style={width<1024?{backgroundColor: val.position.backgroundColor}:val.position}>
-                <span className='opacity-100 font-bold text-sm h-[20px] overflow-hidden' style={{color: val.styles.headingColor}}>{val.heading}</span>
-                {val.sub_heading===""?
-                  <span className='mb-2 h-[20px]' style={{borderBottom: '1px solid #D1D5DB'}}></span>:
-                  <span className='opacity-100 font-bold text-xs mb-2 h-[20px] overflow-hidden' style={{color: val.styles.subHeadingColor, borderBottom: '1px solid #D1D5DB'}}>{val.sub_heading}</span>
-                }
-                <span className='flex opacity-100 font-bold text-[12px] h-[57px] text-justify overflow-hidden' style={{color: val.styles.contentColor}}>{val.content}</span>
-                {val.link!=="" && 
-                  <div className='flex flex-row justify-end items-center mt-3'>
-                    <Button size='small' variant='outlined' onClick={()=>router.push(val.link)}>{"Learn More..."}</Button>
-                  </div>
-                }
-              </div>
+              {val.show_caption==="yes" &&
+                <div className='flex flex-col w-full lg:max-w-[600px] lg:opacity-70 px-2 py-2' style={width<1024?{backgroundColor: val.position.backgroundColor}:val.position}>
+                  <span className='opacity-100 font-bold text-sm h-[20px] overflow-hidden' style={{color: val.styles.headingColor}}>{val.heading}</span>
+                  {val.sub_heading===""?
+                    <span className='mb-2 h-[20px]' style={{borderBottom: '1px solid #D1D5DB'}}></span>:
+                    <span className='opacity-100 font-bold text-xs mb-2 h-[20px] overflow-hidden' style={{color: val.styles.subHeadingColor, borderBottom: '1px solid #D1D5DB'}}>{val.sub_heading}</span>
+                  }
+                  <span className='flex opacity-100 font-bold text-[12px] h-[57px] text-justify overflow-hidden' style={{color: val.styles.contentColor}}>{val.content}</span>
+                  {val.link!=="" && 
+                    <div className='flex flex-row justify-end items-center mt-3'>
+                      <Button size='small' variant='outlined' onClick={()=>router.push(val.link)}>{"Learn More..."}</Button>
+                    </div>
+                  }
+                </div>
+              }
             </div>
           )}
         </Slider>

@@ -95,7 +95,3 @@ const FeaturedProduct = ({itemWidth, val, vertical}) => {
 }
 
 export default FeaturedProduct;
-
-/* 
-
- */

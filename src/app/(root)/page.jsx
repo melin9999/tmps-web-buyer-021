@@ -8,6 +8,7 @@ import HomeSlider from '@/components/sliders/HomeSlider';
 import FeaturedProducts from '@/components/products/FeaturedProducts';
 import HomeSearch from '@/components/toolbars/HomeSearch';
 import FeaturedCategories from '@/components/categories/FeaturedCategories';
+import FeaturedBrands from '@/components/brands/FeaturedBrands';
 
 const Home = () => {
   const router = useRouter();
@@ -66,6 +67,20 @@ const Home = () => {
             >Show All</Button>
           </div>
           <FeaturedProducts limit={20} width={width}/>
+        </div>
+        <div className='bg-white w-full mt-3 pt-2'>
+          <div className='flex flex-row justify-between items-center w-full py-2 bg-white px-1 xs:px-2'>
+            <span className='text-sm xs:text-md md:text-xl font-semibold text-emerald-700'>Top Brands</span>
+            <Button 
+              variant='text' 
+              style={{textTransform: 'none'}} 
+              endIcon={<KeyboardArrowRight />}
+              onClick={()=>router.push('/featured')}
+              size='small'
+              sx={{width: 110}}
+            >Show All</Button>
+          </div>
+          <FeaturedBrands limit={20} width={width}/>
         </div>
       </div>
     </div>
