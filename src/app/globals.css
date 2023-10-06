@@ -7,7 +7,7 @@ body{
 }
 
 .form_container{
-  @apply flex flex-col justify-center items-center w-full  bg-slate-200;
+  @apply flex flex-col justify-center items-center w-full  bg-white;
 }
 
 .form_container_small{
@@ -24,6 +24,10 @@ body{
 
 .form_container_xtra_large{
   @apply flex flex-col justify-start items-center w-full max-w-6xl;
+}
+
+.form_container_2_column{
+  @apply flex flex-col justify-between items-center w-full max-w-6xl;
 }
 
 
@@ -86,11 +90,11 @@ body{
 }
 
 .form_fields_toolbar_container_left{
-  @apply flex flex-row w-full sm:flex-1 justify-start items-start gap-2;
+  @apply flex flex-row w-full sm:flex-1 justify-start items-center gap-2 mb-3 sm:mb-0;
 }
 
 .form_fields_toolbar_container_right{
-  @apply flex flex-row justify-end items-center gap-2 w-full sm:w-[360px];
+  @apply flex flex-row justify-end items-center gap-2 w-full sm:w-[400px] flex-wrap;
 }
 
 

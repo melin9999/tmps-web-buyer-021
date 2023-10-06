@@ -37,51 +37,11 @@ const ProductSearch = ({params}) => {
   const [openModel, setOpenModel] = useState(false);
   const [openCategory, setOpenCategory] = useState(false);
 
-  async function getFeatured(){
-    setIsLoading(true);
-    try{
-      var error = false;
-      if(!error){
-        const response = await axios.post("/api/inventory/featured", {});
-        const values = [];
-        response.data.data.rows.map(val => {
-          var imageUrl = "";
-          if(val.image_url==="none"){
-            imageUrl = "none";
-          }
-          else{
-            imageUrl = "https://tm-web.techmax.lk/"+val.image_url;
-          }
-          values.push({
-            id: val.id,
-            part_category_id: val.part_category_id,
-            part_category_id: val.part_category.description,
-            brand_id: val.brand_id,
-            brand_description: val.brand.description,
-            model_id: val.model_id,
-            model_description: val.model.description,
-            code: val.code,
-            heading: val.heading,
-            short_description: val.short_description,
-            description: val.description,
-            price: val.price,
-            discount: val.discount,
-            free_shipping: val.free_shipping,
-            featured: val.featured,
-            status: val.status,
-            image_url: imageUrl,
-          });
-        });
-        setFeatured(values);
-      }
-    }
-    catch(error){
-      setSlides([]);
-    }
-    finally{
-      setIsLoading(false);
-    }
-  }
+  useEffect(() => {
+    console.log(params);
+  }, [params])
+  
+
 
   return (
     <div className='form_container mt-10' style={{minHeight: (height-80)}}>

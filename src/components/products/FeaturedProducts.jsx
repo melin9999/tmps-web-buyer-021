@@ -1,52 +1,15 @@
 import { useEffect, useState } from 'react';
 import axios from "axios";
 import { CircularProgress } from '@mui/material';
-import Slider from 'react-slick';
 import FeaturedProduct from './FeaturedProduct';
-import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
-
-function SampleNextArrow(props) {
-  const { className, style, onClick } = props;
-  return (
-    <div className='flex flex-col justify-center items-center w-[24px] h-[24px] rounded-[12px] bg-gray-300 opacity-50 cursor-pointer' onClick={onClick} style={{position: 'absolute', top: '50%', right: 12, zIndex: 20}}>
-      <KeyboardArrowRight/>
-    </div>
-  );
-}
-
-function SamplePrevArrow(props) {
-  const { onClick } = props;
-  return (
-    <div className='flex flex-col justify-center items-center w-[24px] h-[24px] rounded-[12px] bg-gray-300 opacity-50 cursor-pointer' onClick={onClick} style={{position: 'absolute', top: '50%', left: 12, zIndex: 20}}>
-      <KeyboardArrowLeft/>
-    </div>
-  );
-}
 
 const FeaturedProducts = ({width, limit}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [serverError, setServerError] = useState(false);
 
   const [featured, setFeatured] = useState([]);
-  const [itemWidth, setItemWidth] = useState(250);
-  const [numberOfSlides, setNumberOfSlides] = useState(5);
-  const [slidesToScroll, setSlidesToScroll] = useState(5);
+  const [itemWidth, setItemWidth] = useState(300);
   const [verticalMode, setVerticalMode] = useState(false);
-
-  var settings = {
-    autoplay: false,
-    pauseOnFocus: true,
-    pauseOnHover: true,
-    dots: false,
-    vertical: verticalMode,
-    verticalSwiping: verticalMode,
-    slidesToShow: numberOfSlides,
-    slidesToScroll: slidesToScroll,
-    infinite: true,
-    speed: 1000,
-    nextArrow: <SampleNextArrow />,
-    prevArrow: <SamplePrevArrow />,
-  };
 
   useEffect(() => {
     setIsLoading(false);
@@ -54,33 +17,27 @@ const FeaturedProducts = ({width, limit}) => {
 
   useEffect(() => {
     if(width>=1152){
-      setItemWidth((1100/5));
-      setNumberOfSlides(5);
-      setSlidesToScroll(3);
+      setItemWidth((1100/3)-10);
       setVerticalMode(false);
     }
     else if(width>=1024 && width<1152){
-      setItemWidth((width/4)-15);
-      setNumberOfSlides(4);
-      setSlidesToScroll(2);
+      setItemWidth((width/3)-20);
       setVerticalMode(false);
     }
-    else if(width>=640 && width<1024){
-      setItemWidth((width/3)-15);
-      setNumberOfSlides(3);
-      setSlidesToScroll(2);
+    else if(width>=700 && width<1024){
+      setItemWidth((width/2)-40);
       setVerticalMode(false);
     }
-    else if(width>=440 && width<640){
-      setItemWidth((width-20));
-      setNumberOfSlides(3);
-      setSlidesToScroll(2);
-      setVerticalMode(true);
+    else if(width>=440 && width<700){
+      setItemWidth(400);
+      setVerticalMode(false);
+    }
+    else if(width>=340 && width<440){
+      setItemWidth((width)-30);
+      setVerticalMode(false);
     }
     else{
-      setItemWidth((width-20));
-      setNumberOfSlides(3);
-      setSlidesToScroll(2);
+      setItemWidth((width)-40);
       setVerticalMode(true);
     }
     getFeatured();
@@ -111,10 +68,6 @@ const FeaturedProducts = ({width, limit}) => {
           if(val.discount>0){
             discountedPrice = val.price - ((val.price*val.discount)/100);
           }
-          var last = false;
-          if((index%numberOfSlides)===0){
-            last = true;
-          }
           values.push({
             index: index,
             id: val.id,
@@ -141,7 +94,6 @@ const FeaturedProducts = ({width, limit}) => {
             featured: val.featured,
             status: val.status,
             image_url: imageUrl,
-            last: last,
           });
         });
         setFeatured(values);
@@ -156,17 +108,17 @@ const FeaturedProducts = ({width, limit}) => {
   }
 
   return (
-    <div className='bg-slate-200 relative py-3' style={{width: width>=1152?1140:(width-20), marginLeft: -3, marginRight: -2, paddingLeft: -5, paddingRight: -5, overflow: 'hidden'}}>
+    <div className='relative py-3' style={{width: width>=1152?1140:(width-20), marginLeft: -3, marginRight: -2, paddingLeft: -5, paddingRight: -5, overflow: 'hidden'}}>
       {isLoading?
         <div className='flex flex-col items-center justify-center w-full h-[300px] lg:h-[300px] sm:h-[250px] xs:h-[150px] bg-white'>
           <CircularProgress size={30} style={{color:"#71717a"}} />
           <span className="text-sm mt-5 font-semibold text-gray-700">Loading...</span>
         </div>:
-        <Slider {...settings}>
+        <div className='flex flex-row justify-center items-center flex-wrap gap-5'>
           {featured.map((val)=>
             <FeaturedProduct key={val.id} val={val} itemWidth={itemWidth} vertical={verticalMode}/>
           )}
-        </Slider>
+        </div>
       }
     </div>
   )

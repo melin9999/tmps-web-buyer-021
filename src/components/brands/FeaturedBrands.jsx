@@ -4,9 +4,10 @@ import { CircularProgress } from '@mui/material';
 import Slider from 'react-slick';
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
 import FeaturedBrand from './FeaturedBrand';
+import FeaturedCategory from '../categories/FeaturedCategory';
 
 function SampleNextArrow(props) {
-  const { className, style, onClick } = props;
+  const { onClick } = props;
   return (
     <div className='flex flex-col justify-center items-center w-[24px] h-[24px] rounded-[12px] bg-gray-300 opacity-50 cursor-pointer' onClick={onClick} style={{position: 'absolute', top: '50%', right: 12, zIndex: 20}}>
       <KeyboardArrowRight/>
@@ -31,15 +32,12 @@ const FeaturedBrands = ({width, limit}) => {
   const [itemWidth, setItemWidth] = useState(250);
   const [numberOfSlides, setNumberOfSlides] = useState(5);
   const [slidesToScroll, setSlidesToScroll] = useState(5);
-  const [verticalMode, setVerticalMode] = useState(false);
 
   var settings = {
     autoplay: false,
     pauseOnFocus: true,
     pauseOnHover: true,
     dots: false,
-    vertical: verticalMode,
-    verticalSwiping: verticalMode,
     slidesToShow: numberOfSlides,
     slidesToScroll: slidesToScroll,
     infinite: true,
@@ -50,47 +48,41 @@ const FeaturedBrands = ({width, limit}) => {
 
   useEffect(() => {
     setIsLoading(false);
+    getFeatured();
   }, []);
 
   useEffect(() => {
     if(width>=1152){
-      setItemWidth((1100/7));
-      setNumberOfSlides(7);
+      setItemWidth((1100/6)-20);
+      setNumberOfSlides(featured.length>=6?6:featured.length);
       setSlidesToScroll(5);
-      setVerticalMode(false);
     }
     else if(width>=1024 && width<1152){
-      setItemWidth((width/6)-7);
-      setNumberOfSlides(6);
-      setSlidesToScroll(4);
-      setVerticalMode(false);
+      setItemWidth((width/5)-20);
+      setNumberOfSlides(featured.length>=5?5:featured.length);
+      setSlidesToScroll(featured.length>=4?4:featured.length);
     }
     else if(width>=640 && width<1024){
-      setItemWidth((width/5)-7);
-      setNumberOfSlides(5);
-      setSlidesToScroll(3);
-      setVerticalMode(false);
+      setItemWidth((width/4)-20);
+      setNumberOfSlides(featured.length>=4?4:featured.length);
+      setSlidesToScroll(featured.length>=3?3:featured.length);
     }
     else if(width>=440 && width<640){
-      setItemWidth((width/3)-7);
-      setNumberOfSlides(3);
-      setSlidesToScroll(2);
-      setVerticalMode(false);
+      setItemWidth((width/3)-20);
+      setNumberOfSlides(featured.length>=3?3:featured.length);
+      setSlidesToScroll(featured.length>=2?2:featured.length);
     }
     else if(width>=340 && width<440){
-      setItemWidth((width/2)-7);
-      setNumberOfSlides(2);
-      setSlidesToScroll(1);
-      setVerticalMode(false);
+      setItemWidth((width/2)-20);
+      setNumberOfSlides(featured.length>=2?2:featured.length);
+      setSlidesToScroll(featured.length>=1?1:featured.length);
     }
     else{
-      setItemWidth((width-20));
-      setNumberOfSlides(2);
-      setSlidesToScroll(2);
-      setVerticalMode(true);
+      setItemWidth((200));
+      setNumberOfSlides(featured.length>=1?1:featured.length);
+      setSlidesToScroll(featured.length>=1?1:featured.length);
     }
-    getFeatured();
-  }, [width]);
+  }, [width, featured]);
 
   async function getFeatured(){
     setServerError(false);
@@ -113,17 +105,12 @@ const FeaturedBrands = ({width, limit}) => {
           else{
             imageUrl = "https://tm-web.techmax.lk/"+val.brand.image_url;
           }
-          var last = false;
-          if((index%numberOfSlides)===0){
-            last = true;
-          }
           values.push({
             index: index,
             id: val.brand.id,
             description: val.brand.description,
             image_url: imageUrl,
             count: val.count,
-            last: last,
           });
         });
         setFeatured(values);
@@ -136,9 +123,10 @@ const FeaturedBrands = ({width, limit}) => {
       setIsLoading(false);
     }
   }
+  
 
   return (
-    <div className='bg-slate-200 relative pt-3' style={{width: width>=1152?1140:(width-20), marginLeft: -3, marginRight: -2, paddingLeft: -5, paddingRight: -5, overflow: 'hidden'}}>
+    <div className='bg-white relative pt-3' style={{width: width>=1152?1152:(width-15)}}>
       {isLoading?
         <div className='flex flex-col items-center justify-center w-full h-[200px] lg:h-[150px] sm:h-[150px] xs:h-[150px] bg-white'>
           <CircularProgress size={30} style={{color:"#71717a"}} />
@@ -146,7 +134,7 @@ const FeaturedBrands = ({width, limit}) => {
         </div>:
         <Slider {...settings}>
           {featured.map((val)=>
-            <FeaturedBrand key={val.id} val={val} itemWidth={itemWidth} vertical={verticalMode}/>
+            <FeaturedBrand key={val.id} val={val} itemWidth={itemWidth}/>
           )}
         </Slider>
       }

@@ -125,8 +125,6 @@ const HomeSlider = ({width}) => {
             content: val.content,
             position: position,
             styles: styles,
-            v_position: val.v_position,
-            h_position: val.h_position,
             image_url: imageUrl,
             show_caption: val.show_caption,
             status: val.status,
@@ -144,7 +142,7 @@ const HomeSlider = ({width}) => {
   }
 
   return (
-    <div className='w-full max-w-6xl bg-slate-200 py-0 relative'>
+    <div className='w-full max-w-6xl bg-white py-0 relative'>
       {isLoading?
         <div className='flex flex-col items-center justify-center w-full h-[300px] lg:h-[300px] sm:h-[250px] xs:h-[150px] bg-slate-200'>
           <CircularProgress size={30} style={{color:"#71717a"}} />
@@ -153,7 +151,7 @@ const HomeSlider = ({width}) => {
         <Slider {...settings}>
           {slides.map(val=>
             <div key={val.id} className='flex flex-col justify-center items-center relative my-0'>
-              <img src={val.image_url} style={{margin: 0, width: width>1152?(1152):(width)}}/>
+              <img src={val.image_url} alt='slider image' style={{margin: 0, width: width>1152?(1152):(width)}}/>
               {val.show_caption==="yes" &&
                 <div className='flex flex-col w-full lg:max-w-[600px] lg:opacity-70 px-2 py-2' style={width<1024?{backgroundColor: val.position.backgroundColor}:val.position}>
                   <span className='opacity-100 font-bold text-sm h-[20px] overflow-hidden' style={{color: val.styles.headingColor}}>{val.heading}</span>

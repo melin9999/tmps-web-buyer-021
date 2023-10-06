@@ -8,6 +8,7 @@ import AuthProvider from '@/providers/AuthProvider';
 import CssBaseline from '@mui/material/CssBaseline';
 import DateProvider from '@/providers/DateProvider';
 import CustomThemeProvider from '@/providers/CustomThemeProvider';
+import SearchContextProvider from '@/providers/SearchContextProvider';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -22,11 +23,13 @@ export default function RootLayout({ children }) {
       <body className={inter.className}>
         <CssBaseline/>
         <CustomThemeProvider>
-          <AuthProvider>
-            <DateProvider>
-              {children}
-            </DateProvider>
-          </AuthProvider>
+          <SearchContextProvider>
+            <AuthProvider>
+              <DateProvider>
+                {children}
+              </DateProvider>
+            </AuthProvider>
+          </SearchContextProvider>
         </CustomThemeProvider>
       </body>
     </html>

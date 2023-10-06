@@ -90,7 +90,7 @@ const MainHeader = () => {
   }
 
   return (
-    <div className="flex flex-col justify-center items-center w-full fixed top-0 z-50 bg-slate-200">
+    <div className="flex flex-col justify-center items-center w-full fixed top-0 z-50 bg-white">
       <div className="flex flex-row justify-between items-center w-full max-w-6xl bg-white" style={{borderBottom: "3px solid #047857"}}>
         <div className='flex flex-row flex-1'>
           <div onClick={()=>router.push("/")} className='flex flex-row gap-1 px-2 h-[40px] justify-start items-center cursor-pointer'>

@@ -146,7 +146,7 @@ const HomeSearch = ({searchCategory, setSearchCategory, searchBrand, setSearchBr
   }
 
   return (
-    <div className='form_fields_toolbar_container_home mt-3 w-full' style={{borderBottom: '1px solid #e8e8e8'}}>
+    <div className='form_fields_toolbar_container_home w-full'>
       <div className='form_fields_toolbar_container_home_left_1 relative'>
         {width>=768 && <span ref={categoryRef} className='w-[0px] h-[30px] absolute top-5 -left-1'/>}
         {width>=768 && <span ref={brandRef} className='w-[0px] h-[30px] absolute top-5 -left-1'/>}
