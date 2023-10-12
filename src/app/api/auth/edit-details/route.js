@@ -4,7 +4,7 @@ export async function POST(req){
   try{
     const body = await req.json();
     console.log(body);
-    const res = await fetch("https://tm-web.techmax.lk/online-users/edit-customer-details-web", {
+    const res = await fetch("http://localhost:8000/online-users/edit-customer-details-web", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

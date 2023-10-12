@@ -102,7 +102,7 @@ const FeaturedCategories = ({width, limit}) => {
             imageUrl = "none";
           }
           else{
-            imageUrl = "https://tm-web.techmax.lk/"+val.part_category.image_url;
+            imageUrl = "http://localhost:8000/"+val.part_category.image_url;
           }
           values.push({
             index: index,

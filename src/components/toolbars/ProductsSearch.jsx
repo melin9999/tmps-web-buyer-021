@@ -63,7 +63,7 @@ const ProductsSearch = ({searchCategory, setSearchCategory, searchBrand, setSear
             imageUrl = "none";
           }
           else{
-            imageUrl = "https://tm-web.techmax.lk/"+val.image_url;
+            imageUrl = "http://localhost:8000/"+val.image_url;
           }
           values.push({
             id: val.id,
@@ -97,7 +97,7 @@ const ProductsSearch = ({searchCategory, setSearchCategory, searchBrand, setSear
             imageUrl = "none";
           }
           else{
-            imageUrl = "https://tm-web.techmax.lk/"+val.image_url;
+            imageUrl = "http://localhost:8000/"+val.image_url;
           }
           values.push({
             id: val.id,
@@ -140,7 +140,7 @@ const ProductsSearch = ({searchCategory, setSearchCategory, searchBrand, setSear
               imageUrl = "none";
             }
             else{
-              imageUrl = "https://tm-web.techmax.lk/"+val.image_url;
+              imageUrl = "http://localhost:8000/"+val.image_url;
             }
             values.push({
               id: val.id,
@@ -333,7 +333,7 @@ const ProductsSearch = ({searchCategory, setSearchCategory, searchBrand, setSear
                 <div className='flex justify-center items-center w-[26px] h-[26px] rounded-[13px] relative overflow-hidden'>
                   {val.image_url==="none" ? 
                     <div></div> : 
-                    <Image src={"https://tm-web.techmax.lk/"+val.image_url} alt="feature image" fill sizes='26px' priority={true} style={{objectFit: 'cover'}}/>
+                    <Image src={"http://localhost:8000/"+val.image_url} alt="feature image" fill sizes='26px' priority={true} style={{objectFit: 'cover'}}/>
                   }
                 </div>
                 <span className='text-sm ml-2 w-full'>{val.description}</span>
@@ -350,7 +350,7 @@ const ProductsSearch = ({searchCategory, setSearchCategory, searchBrand, setSear
                       <div className='flex justify-center items-center w-[26px] h-[26px] rounded-[13px] relative overflow-hidden'>
                         {val1.image_url==="none" ? 
                           <span></span> : 
-                          <Image src={"https://tm-web.techmax.lk/"+val1.image_url} alt="feature image" fill sizes='26px' priority={true} style={{objectFit: 'cover'}}/>
+                          <Image src={"http://localhost:8000/"+val1.image_url} alt="feature image" fill sizes='26px' priority={true} style={{objectFit: 'cover'}}/>
                         }
                       </div>
                       <span className="text-sm mb-1 ml-3">{val1.description}</span>

@@ -1,18 +1,21 @@
 'use client';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import {  signOut, useSession } from 'next-auth/react';
-import { Avatar, Button, CircularProgress, ClickAwayListener, Divider, Grow, IconButton, ListItemIcon, MenuItem, MenuList, Paper, Popper } from "@mui/material";
-import { DirectionsCar, Favorite, FileCopy, Login, Logout, Menu, Notifications, Person, PersonAdd, Settings, ShoppingCart } from "@mui/icons-material";
+import { Avatar, Button, CircularProgress, ClickAwayListener, Divider, Drawer, Grow, IconButton, InputAdornment, ListItemIcon, MenuItem, MenuList, Paper, Popper, TextField } from "@mui/material";
+import { DirectionsCar, Favorite, FileCopy, Login, Logout, Menu, MoreVert, Notifications, Person, PersonAdd, Search, Settings, ShoppingCart } from "@mui/icons-material";
+import Navbar from './Navbar';
 
 const MainHeader = () => {
   const router = useRouter();
+  const pathname = usePathname();
   const {data: session, status} = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [imageUrl, setImageUrl] = useState("none");
   const [open, setOpen] = useState(false);
+  const [openMenu, setOpenMenu] = useState(false);
   const anchorRef = useRef(null);
 
   useEffect(() => {
@@ -24,7 +27,7 @@ const MainHeader = () => {
         }
       }
       else{
-        setImageUrl("https://tm-web.techmax.lk/"+session.user.image);
+        setImageUrl("http://localhost:8000/"+session.user.image);
       }
     }
     else{
@@ -32,6 +35,10 @@ const MainHeader = () => {
     }
   }, [session]);
 
+  useEffect(() => {
+    console.log(status);
+  }, [status]);
+  
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
@@ -40,9 +47,11 @@ const MainHeader = () => {
     if(event.key==='Tab') {
       event.preventDefault();
       setOpen(false);
+      setOpenMenu(false);
     } 
     else if(event.key==='Escape'){
       setOpen(false);
+      setOpenMenu(false);
     }
   }
 
@@ -91,31 +100,32 @@ const MainHeader = () => {
 
   return (
     <div className="flex flex-col justify-center items-center w-full fixed top-0 z-50 bg-white">
-      <div className="flex flex-row justify-between items-center w-full max-w-6xl bg-white" style={{borderBottom: "3px solid #047857"}}>
+      <div className="flex flex-row justify-between items-center w-full max-w-7xl bg-white">
         <div className='flex flex-row flex-1'>
-          <div onClick={()=>router.push("/")} className='flex flex-row gap-1 px-2 h-[40px] justify-start items-center cursor-pointer'>
-            <div className='w-[50px] h-[30px] relative'><Image src='/logo-small.png' alt='logo' fill sizes='50px' priority={true} style={{objectFit: 'contain'}}/></div>
-            <p className='font-bold text-xl sm:text-2xl text-emerald-700 hidden xs:flex'>TeckMax.lk</p>
+          <div onClick={()=>router.push("/")} className='flex flex-row gap-0 h-[40px] justify-start items-center cursor-pointer'>
+            <p className='font-bold text-xl sm:text-2xl hidden xs:flex pl-1 xl:p-0' style={{color: '#77bd1f'}}>TeckMax</p>
+            <div className='w-[50px] h-[30px] relative'><Image src='/logo_1.png' alt='logo' fill sizes='50px' priority={true} style={{objectFit: 'contain'}}/></div>
+            <p className='font-bold text-md sm:text-xl hidden xs:flex' style={{color: '#475569'}}>Electronics</p>
           </div>
         </div>
         {status==="loading" && 
           <div className="flex flex-row justify-center items-center px-2">
-            <CircularProgress size={24}/>
+            <CircularProgress size={24} color='button'/>
           </div>
         }
         {status==="authenticated" && 
           <>
             <div className="flex flex-row justify-center items-center gap-1">
-              <IconButton onClick={()=>router.push('/notifications')}><Notifications sx={{width: 22, height: 22, color: '#047857'}}/></IconButton>
-              <IconButton onClick={()=>router.push('/cart')}><ShoppingCart sx={{width: 22, height: 22, color: '#047857'}}/></IconButton>
+              <IconButton onClick={()=>router.push('/notifications')}><Notifications sx={{width: 22, height: 22, color: '#475569'}}/></IconButton>
+              <IconButton onClick={()=>router.push('/cart')}><ShoppingCart sx={{width: 22, height: 22, color: '#475569'}}/></IconButton>
               <div className='flex flex-row justify-center items-center gap-2 cursor-pointer' onClick={()=>router.push('/profile')}>
-                {imageUrl==="none"?<Person sx={{width: 30, height: 30, color: '#047857'}}/>:<Avatar src={imageUrl} sx={{width: 30, height: 30}}/>}
+                {imageUrl==="none"?<Person sx={{width: 30, height: 30, color: '#475569'}}/>:<Avatar src={imageUrl} sx={{width: 30, height: 30}}/>}
                 <div className='flex-col justify-center items-start w-30 hidden md:flex'>
                   <span className='text-xs font-medium'>{session?.user.name}</span>
                   <span className='text-xs text-emerald-700'>{"Buyer"}</span>
                 </div>
               </div>
-              <IconButton ref={anchorRef} onClick={handleToggle}><Menu sx={{width: 28, height: 28, color: '#047857'}}/></IconButton>
+              <IconButton ref={anchorRef} onClick={handleToggle}><MoreVert sx={{width: 28, height: 28, color: '#475569'}}/></IconButton>
             </div>
             <Popper
               open={open}
@@ -223,24 +233,27 @@ const MainHeader = () => {
           </>
         }
         {status==="unauthenticated" && 
-          <div className="flex flex-row justify-center items-center gap-1 px-2">
+          <div className="flex flex-row justify-center items-center gap-3">
             <Button 
-              variant='contained' 
+              variant='text' 
               style={{textTransform: 'none'}} 
               startIcon={<Login />}
               onClick={()=>router.push('/signin')}
               size='small'
+              color='button'
             >Sign In</Button>
             <Button 
-              variant='outlined' 
+              variant='text' 
               style={{textTransform: 'none'}} 
               startIcon={<PersonAdd />}
               onClick={()=>router.push('/signup')}
               size='small'
+              color='button'
             >Sign Up</Button>
           </div>
         }
       </div>
+      <Navbar/>      
     </div>
   )
 }

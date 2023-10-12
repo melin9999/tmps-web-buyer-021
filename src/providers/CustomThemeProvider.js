@@ -9,6 +9,9 @@ const theme = createTheme({
     secondary: {
       main: '#fde047',
     },
+    button: {
+      main: '#475569',
+    },
   },
 });
 

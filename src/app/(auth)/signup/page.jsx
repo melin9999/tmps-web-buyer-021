@@ -420,7 +420,7 @@ const Signup = () => {
       formData.append('imageUrl', file);
       axios({
         method: "post",
-        url: "https://tm-web.techmax.lk/online-users/edit-image-web",
+        url: "http://localhost:8000/online-users/edit-image-web",
         data: formData,
         headers: { "Content-Type": "multipart/form-data" },
       })

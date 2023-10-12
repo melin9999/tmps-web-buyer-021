@@ -8,6 +8,7 @@ export default function SearchContextProvider({children}){
   const [contextBrand, setContextBrand] = useState({id: 0, description: "All"});
   const [contextModel, setContextModel] = useState({id: 0, description: "All", brandId: 0, brandDescription: "All"});
   const [contextCategory, setContextCategory] = useState({id: 0, description: "All"});
+  const [contextSubCategory, setContextSubCategory] = useState({id: 0, description: "All"});
 
   return (
     <SearchContext.Provider value={{
@@ -19,6 +20,8 @@ export default function SearchContextProvider({children}){
       setContextModel,
       contextCategory,
       setContextCategory,
+      contextSubCategory,
+      setContextSubCategory,
     }}>
       {children}
     </SearchContext.Provider>

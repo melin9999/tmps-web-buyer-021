@@ -61,7 +61,7 @@ const HomeSlider = ({width}) => {
       setIsLoading(true);
       var error = false;
       if(!error){
-        const response = await axios.post("/api/supportdata/slides/", {});
+        const response = await axios.post("/api/slides/active/", {});
         const values = [];
         response.data.data.rows.map(val => {
           var imageUrl = "";
@@ -69,7 +69,7 @@ const HomeSlider = ({width}) => {
             imageUrl = "none";
           }
           else{
-            imageUrl = "https://tm-web.techmax.lk/"+val.image_url;
+            imageUrl = "http://localhost:8000/"+val.image_url;
           }
           var position = {};
           if(val.position=="top_start"){
