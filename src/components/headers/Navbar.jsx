@@ -6,6 +6,7 @@ import { CameraAlt, Check, Close, Home, KeyboardArrowDown, KeyboardArrowRight, M
 import axios from "axios";
 import useWindowDimensions from '@/hooks/useWindowDimension';
 import Image from 'next/image';
+import { useSearchContext } from '@/providers/SearchContextProvider';
 
 const Navbar = () => {
   const [isLoading1, setIsLoading1] = useState(false);
@@ -14,29 +15,32 @@ const Navbar = () => {
   const { width=500, height=500 } = useWindowDimensions();
   const router = useRouter();
   const pathname = usePathname();
+  const {setContextDescription, setContextCategory, setContextSubCategory, setContextBrand} = useSearchContext();
 
-  const [open, setOpen] = useState(false);
-  const anchorRef = useRef(null);
+  const [openMenu, setOpenMenu] = useState(false);
+  const menuRef = useRef(null);
   const categoryRef = useRef(null);
   const brandRef = useRef(null);
+
+  const [description, setDescription] = useState("");
 
   const [openCategory, setOpenCategory] = useState(false);
   const [openBrand, setOpenBrand] = useState(false);
 
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
-  
-  const handleToggle = () => {
-    setOpen((prevOpen) => !prevOpen);
-  };
 
   function handleListKeyDown(event){
     if(event.key==='Tab') {
       event.preventDefault();
-      setOpen(false);
+      setOpenMenu(false);
+      setOpenCategory(false);
+      setOpenBrand(false);
     } 
     else if(event.key==='Escape'){
-      setOpen(false);
+      setOpenMenu(false);
+      setOpenCategory(false);
+      setOpenBrand(false);
     }
   }
 
@@ -122,7 +126,6 @@ const Navbar = () => {
             image_url: imageUrl,
           });
         });
-        console.log(values);
         setBrands(values);
       }
     }
@@ -134,6 +137,25 @@ const Navbar = () => {
     }
   };
 
+  const categorySelected = (val, val1) => {
+    setOpenCategory(false);
+    setContextCategory({id: val.id, description: val.description});
+    setContextSubCategory({id: val1.id, description: val1.description});
+    router.push(`/products/search/`);
+  }
+
+  const brandSelected = (val) => {
+    setContextBrand({id: val.id, description: val.description});
+    setOpenBrand(false);
+    router.push(`/products/search/`);
+  }
+
+  const searchClicked = (val) => {
+    setContextDescription(val);
+    router.push(`/products/search/`);
+  }
+
+  
   return (
     <div className='flex flex-row w-full justify-between items-center max-w-7xl relative' style={{backgroundColor: '#77bd1f'}}>
       <span ref={categoryRef} className='w-[0px] h-[30px] absolute top-2 left-0'/>
@@ -141,32 +163,32 @@ const Navbar = () => {
       <div className='hidden xl:flex flex-row justify-center items-center gap-1'>
         <Button variant='text'
           sx={{textTransform: 'none', color: '#fff'}} 
-          onClick={()=>router.push("/home")} startIcon={<Home sx={{width: 18, height: 18, color: '#fff'}}/>} endIcon={pathname.indexOf('/home')>=0?<Check sx={{width: 22, height: 22, color: '#fff'}}/>:<KeyboardArrowDown sx={{width: 22, height: 22, color: '#fff'}}/>}>Home</Button>
+          onClick={()=>router.push("/")} startIcon={<Home sx={{width: 18, height: 18, color: '#fff'}}/>} endIcon={<KeyboardArrowDown sx={{width: 18, height: 18, color: '#fff'}}/>}>Home</Button>
         <Button variant='text'
           sx={{textTransform: 'none', color: '#fff'}} 
-          onClick={()=>setOpenCategory(val=>!val)} endIcon={pathname.indexOf('/products')>=0?<Check sx={{width: 22, height: 22, color: '#fff'}}/>:<KeyboardArrowDown sx={{width: 22, height: 22, color: '#fff'}}/>}>Products</Button>
+          onClick={()=>setOpenCategory(val=>!val)} endIcon={<KeyboardArrowDown sx={{width: 18, height: 18, color: '#fff'}}/>}>Products</Button>
         <Button variant='text'
           sx={{textTransform: 'none', color: '#fff'}} 
-          onClick={()=>setOpenBrand(val=>!val)} endIcon={pathname.indexOf('/brands')>=0?<Check sx={{width: 22, height: 22, color: '#fff'}}/>:<KeyboardArrowDown sx={{width: 22, height: 22, color: '#fff'}}/>}>Brands</Button>
+          onClick={()=>setOpenBrand(val=>!val)} endIcon={<KeyboardArrowDown sx={{width: 18, height: 18, color: '#fff'}}/>}>Brands</Button>
         <Button variant='text'
           sx={{textTransform: 'none', color: '#fff'}} 
-          onClick={()=>router.push("/spares")} endIcon={pathname.indexOf('/spares')>=0?<Check sx={{width: 22, height: 22, color: '#fff'}}/>:<KeyboardArrowDown sx={{width: 22, height: 22, color: '#fff'}}/>}>Spares</Button>
+          onClick={()=>router.push("/spares")} endIcon={pathname.indexOf('/spares')>=0?<Check sx={{width: 18, height: 18, color: '#fff'}}/>:<KeyboardArrowDown sx={{width: 18, height: 18, color: '#fff'}}/>}>Spares</Button>
         <Button variant='text'
           sx={{textTransform: 'none', color: '#fff'}} 
-          onClick={()=>router.push("/installations")} endIcon={pathname.indexOf('/installations')>=0?<Check sx={{width: 22, height: 22, color: '#fff'}}/>:<KeyboardArrowDown sx={{width: 22, height: 22, color: '#fff'}}/>}>Installations</Button>
+          onClick={()=>router.push("/installations")} endIcon={pathname.indexOf('/installations')>=0?<Check sx={{width: 18, height: 18, color: '#fff'}}/>:<KeyboardArrowDown sx={{width: 18, height: 18, color: '#fff'}}/>}>Installations</Button>
         <Button variant='text'
           sx={{textTransform: 'none', color: '#fff'}} 
-          onClick={()=>router.push("/shop-locator")} endIcon={pathname.indexOf('/shop-locator')>=0?<Check sx={{width: 22, height: 22, color: '#fff'}}/>:<KeyboardArrowDown sx={{width: 22, height: 22, color: '#fff'}}/>}>Shop Locator</Button>
+          onClick={()=>router.push("/shop-locator")} endIcon={pathname.indexOf('/shop-locator')>=0?<Check sx={{width: 18, height: 18, color: '#fff'}}/>:<KeyboardArrowDown sx={{width: 18, height: 18, color: '#fff'}}/>}>Shop Locator</Button>
         <Button variant='text'
           sx={{textTransform: 'none', color: '#fff'}} 
-          onClick={()=>router.push("/services")} endIcon={pathname.indexOf('/services')>=0?<Check sx={{width: 22, height: 22, color: '#fff'}}/>:<KeyboardArrowDown sx={{width: 22, height: 22, color: '#fff'}}/>}>Services</Button>
+          onClick={()=>router.push("/services")} endIcon={pathname.indexOf('/services')>=0?<Check sx={{width: 18, height: 18, color: '#fff'}}/>:<KeyboardArrowDown sx={{width: 18, height: 18, color: '#fff'}}/>}>Services</Button>
         
       </div>
       <div className='flex xl:hidden w-full justify-start items-center relative' style={{backgroundColor: '#77bd1f'}}>
-        <IconButton ref={anchorRef} size='small' onClick={handleToggle}><Menu sx={{width: 28, height: 28, color: '#fff'}}/></IconButton>
+        <IconButton ref={menuRef} size='small' onClick={()=>setOpenMenu(true)}><Menu sx={{width: 28, height: 28, color: '#fff'}}/></IconButton>
         <Popper
-          open={open}
-          anchorEl={anchorRef.current}
+          open={openMenu}
+          anchorEl={menuRef.current}
           placement="bottom-start"
           transition={true}
           disablePortal={true}
@@ -179,48 +201,48 @@ const Navbar = () => {
               }}
             >
               <Paper>
-                <ClickAwayListener onClickAway={()=>setOpen(false)}>
-                  <MenuList autoFocusItem={open} onKeyDown={handleListKeyDown} sx={{width: 230, backgroundColor: '#77bd1f'}}>                    
+                <ClickAwayListener onClickAway={()=>setOpenMenu(false)}>
+                  <MenuList autoFocusItem={openMenu} onKeyDown={handleListKeyDown} sx={{width: 230, backgroundColor: '#77bd1f'}}>                    
                     <MenuItem
                       onClick={()=>{
-                        setOpen(false);
-                        router.push("/home");
+                        setOpenMenu(false);
+                        router.push("/");
                       }}
                       size='small'
                     >
                       <div className='flex w-full justify-between items-center pb-2' style={{borderBottom: '1px solid #fff'}}>
                         <Home sx={{width: 18, height: 18, color: '#fff'}}/>
                         <span className='flex flex-1 text-sm text-white font-semibold pl-1'>Home</span>
-                        {pathname.indexOf('/home')>=0?<Check sx={{width: 22, height: 22, color: '#fff'}}/>:<KeyboardArrowRight sx={{width: 22, height: 22, color: '#fff'}}/>}
+                        <KeyboardArrowRight sx={{width: 22, height: 22, color: '#fff'}}/>
                       </div>
                     </MenuItem>
                     <MenuItem
                       onClick={()=>{
-                        setOpen(false);
+                        setOpenMenu(false);
                         setOpenCategory(val=>!val);
                       }}
                       size='small'
                     >
                       <div className='flex w-full justify-between items-center pb-2' style={{borderBottom: '1px solid #fff'}}>
                         <span className='flex text-sm text-white font-semibold'>Products</span>
-                        {pathname.indexOf('/products')>=0?<Check sx={{width: 22, height: 22, color: '#fff'}}/>:<KeyboardArrowRight sx={{width: 22, height: 22, color: '#fff'}}/>}
+                        <KeyboardArrowRight sx={{width: 22, height: 22, color: '#fff'}}/>
                       </div>
                     </MenuItem>
                     <MenuItem
                       onClick={()=>{
-                        setOpen(false);
+                        setOpenMenu(false);
                         setOpenBrand(val=>!val);
                       }}
                       size='small'
                     >
                       <div className='flex w-full justify-between items-center pb-2' style={{borderBottom: '1px solid #fff'}}>
                         <span className='text-sm text-white font-semibold'>Brands</span>
-                        {pathname.indexOf('/brands')>=0?<Check sx={{width: 22, height: 22, color: '#fff'}}/>:<KeyboardArrowRight sx={{width: 22, height: 22, color: '#fff'}}/>}
+                        <KeyboardArrowRight sx={{width: 22, height: 22, color: '#fff'}}/>
                       </div>
                     </MenuItem>
                     <MenuItem
                       onClick={()=>{
-                        setOpen(false);
+                        setOpenMenu(false);
                         router.push("/spares");
                       }}
                       size='small'
@@ -232,7 +254,7 @@ const Navbar = () => {
                     </MenuItem>
                     <MenuItem
                       onClick={()=>{
-                        setOpen(false);
+                        setOpenMenu(false);
                         router.push("/installations");
                       }}
                       size='small'
@@ -244,7 +266,7 @@ const Navbar = () => {
                     </MenuItem>
                     <MenuItem
                       onClick={()=>{
-                        setOpen(false);
+                        setOpenMenu(false);
                         router.push("/shop-locator");
                       }}
                       size='small'
@@ -256,7 +278,7 @@ const Navbar = () => {
                     </MenuItem>
                     <MenuItem
                       onClick={()=>{
-                        setOpen(false);
+                        setOpenMenu(false);
                         router.push("/services");
                       }}
                       size='small'
@@ -277,13 +299,13 @@ const Navbar = () => {
       <div className='flex flex-row justify-center items-center'>
         <div className='flex flex-row justify-center items-center bg-white p-1 w-[250px]'>
           <Search sx={{width: 22, height: 22, color: '#94a3b8'}}/>
-          <input type='text' className='border-none outline-none w-full'/>
+          <input type='text' className='border-none outline-none w-full' onChange={(e)=>setDescription(e.target.value)}/>
         </div>
         <Button 
           variant='text' 
           style={{textTransform: 'none'}} 
           startIcon={<Search />}
-          onClick={()=>{}}
+          onClick={searchClicked}
           size='small'
           sx={{color: '#fff'}}
         >Search</Button>
@@ -305,11 +327,11 @@ const Navbar = () => {
                     <span className="text-sm mt-5 font-semibold text-gray-700">{"Loading..."}</span>
                   </div>:
                   <div className='flex flex-col justify-start items-start w-[100%] pb-2 px-3 bg-white shadow-xl' style={{width: width>=1280?1280:(width)}}>
-                    <div className='flex flex-row justify-between items-center w-full py-2'>
+                    <div className='flex flex-row justify-between items-center w-full pt-2'>
                       <span className='text-md font-semibold text-emerald-700'>{}</span>
                       <IconButton onClick={()=>setOpenCategory(false)} sx={{width: 30, height: 30, borderRadius: 15, color: '#fff', backgroundColor: '#9CA3AF'}}><Close sx={{width: 20, height: 20, color: '#ffffff'}}/></IconButton>
                     </div>
-                    <div className='flex flex-row justify-start items-start w-full flex-wrap max-h-[600px] overflow-y-auto pt-2 xs:pt-5 pb-3'>
+                    <div className='flex flex-row justify-start items-start w-full flex-wrap max-h-[600px] overflow-y-auto pt-1 pb-3'>
                       {categories.map(val=>
                         <div key={val.id} className='flex flex-col justify-center items-start w-[90%] xs:w-[175px] sm:w-[175px] md:w-[220px] gap-2 py-3 px-1 mr-0 xs:mr-5'>
                           <div className='flex flex-row justify-start items-center w-full h-[40px] bg-[#dcfce7] gap-2 px-1'>
@@ -323,7 +345,7 @@ const Navbar = () => {
                           </div>
                           <div className='flex flex-col justify-center items-center w-full pr-2'>
                             {val.sub_categories.map(val1=>
-                              <div key={val1.id} className='flex flex-row justify-start items-center w-full h-[40px] gap-2 py-3 px-1 cursor-pointer hover:bg-slate-100' style={{borderRight: width>440?('1px solid #D1D5DB'):'none'}} onClick={()=>{setOpenCategory(false);}}>
+                              <div key={val1.id} className='flex flex-row justify-start items-center w-full h-[40px] gap-2 py-3 px-1 cursor-pointer hover:bg-slate-100' style={{borderRight: width>440?('1px solid #D1D5DB'):'none'}} onClick={()=>categorySelected(val, val1)}>
                                 <div className='flex flex-col justify-center items-center w-[30px] h-[30px]'>
                                   {val1.image_url==="none" ? 
                                     <CameraAlt sx={{width: 30, height: 30, color: '#cbd5e1'}}/> : 
@@ -344,7 +366,6 @@ const Navbar = () => {
           </Grow>
         )}
       </Popper>
-
       <Popper
         open={openBrand}
         anchorEl={brandRef.current}
@@ -356,7 +377,7 @@ const Navbar = () => {
           <Grow {...TransitionProps}>
             <Paper className='flex flex-col w-[100%] max-w-7xl'>
               <ClickAwayListener onClickAway={()=>setOpenBrand(false)}>
-                {isLoading1 ? 
+                {isLoading2 ? 
                   <div className='flex flex-col items-center justify-center w-full min-h-[200px] lg:h-[300px] sm:h-[250px] xs:h-[150px] bg-slate-100 shadow-xl' style={{width: width>=1280?1280:(width)}}>
                     <CircularProgress size={30} style={{color:"#71717a"}} />
                     <span className="text-sm mt-5 font-semibold text-gray-700">{"Loading..."}</span>
@@ -368,7 +389,7 @@ const Navbar = () => {
                     </div>
                     <div className='flex flex-row justify-start items-start w-full flex-wrap max-h-[600px] overflow-y-auto pt-2 xs:pt-5 pb-3'>
                       {brands.map(val=>
-                        <div key={val.id} className='flex flex-row justify-start items-center w-[90%] xs:w-[175px] sm:w-[175px] md:w-[220px] gap-2 py-3 px-1 mr-0 xs:mr-5'>
+                        <div key={val.id} className='flex flex-row justify-start items-center w-[90%] xs:w-[175px] sm:w-[175px] md:w-[220px] gap-2 py-3 px-1 mr-0 xs:mr-5 cursor-pointer hover:bg-slate-100' style={{borderRight: width>440?('1px solid #D1D5DB'):'none'}} onClick={()=>brandSelected(val)}>
                           <div className='flex flex-col justify-center items-center w-[80px] h-[30px] relative'>
                             {val.image_url==="none" ? 
                               <CameraAlt sx={{width: 30, height: 30, color: '#cbd5e1'}}/> : 
@@ -386,7 +407,6 @@ const Navbar = () => {
           </Grow>
         )}
       </Popper>
-
     </div>
   )
 }

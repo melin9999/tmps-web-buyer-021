@@ -34,10 +34,6 @@ const MainHeader = () => {
       setIsAuthenticated(false);
     }
   }, [session]);
-
-  useEffect(() => {
-    console.log(status);
-  }, [status]);
   
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
