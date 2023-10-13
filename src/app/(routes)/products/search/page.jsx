@@ -58,7 +58,7 @@ const ProductSearch = () => {
   }
 
   return (
-    <div className='form_container' style={{minHeight: (height-125)}}>
+    <div className='form_container pt-10' style={{minHeight: (height-125)}}>
       <div className='form_container_xtra_large' style={{minHeight: (height-125)}}>
         <div className='flex flex-row w-full justify-start lg:justify-between items-start relative' style={{minHeight: (height-125)}}>
           {((filtersShowing && smallScreen) || (!smallScreen)) && 
@@ -117,15 +117,17 @@ const ProductSearch = () => {
                   <MenuItem value={50}>50</MenuItem>
                   <MenuItem value={100}>100</MenuItem>
                 </TextField>
-                <div className='flex flex-row justify-center items-center w-[140px]'>
-                  <IconButton aria-label="delete" size="small" onClick={()=>getSearchData(searchPage-1)}>
-                    <KeyboardArrowLeft size={20} />
-                  </IconButton>
-                  <Typography sx={{fontSize: 12, color: "#444"}}>{`Page ${searchPage} of ${searchNop}`}</Typography>
-                  <IconButton aria-label="delete" size="small" onClick={()=>getSearchData(searchPage+1)}>
-                    <KeyboardArrowRight size={20} />
-                  </IconButton>
-                </div>
+                {searchRpp!==0 &&
+                  <div className='flex flex-row justify-center items-center w-[140px]'>
+                    <IconButton aria-label="delete" size="small" onClick={()=>getSearchData(searchPage-1)}>
+                      <KeyboardArrowLeft size={20} />
+                    </IconButton>
+                    <Typography sx={{fontSize: 12, color: "#444"}}>{`Page ${searchPage} of ${searchNop}`}</Typography>
+                    <IconButton aria-label="delete" size="small" onClick={()=>getSearchData(searchPage+1)}>
+                      <KeyboardArrowRight size={20} />
+                    </IconButton>
+                  </div>
+                }
                 <Button 
                   variant='contained' 
                   style={{textTransform: 'none'}} 

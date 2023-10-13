@@ -84,13 +84,17 @@ const ProductSearch = ({params}) => {
             >Filters</Button>
           </div>
           <div className='form_fields_toolbar_container_home_right'>
-            <IconButton aria-label="delete" size="small" onClick={()=>getSearchData(searchPage-1)}>
-              <KeyboardArrowLeft size={20} />
-            </IconButton>
-            <Typography sx={{fontSize: 12, color: "#444"}}>{`Page ${searchPage} of ${searchNop}`}</Typography>
-            <IconButton aria-label="delete" size="small" onClick={()=>getSearchData(searchPage+1)}>
-              <KeyboardArrowRight size={20} />
-            </IconButton>
+            {searchRpp!==0 &&
+              <>
+                <IconButton aria-label="delete" size="small" onClick={()=>getSearchData(searchPage-1)}>
+                  <KeyboardArrowLeft size={20} />
+                </IconButton>
+                <Typography sx={{fontSize: 12, color: "#444"}}>{`Page ${searchPage} of ${searchNop}`}</Typography>
+                <IconButton aria-label="delete" size="small" onClick={()=>getSearchData(searchPage+1)}>
+                  <KeyboardArrowRight size={20} />
+                </IconButton>
+              </>
+            }
             <TextField
               className='form_text_field_xtra_xtra_small'
               id='rpp'

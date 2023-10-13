@@ -163,7 +163,7 @@ const Navbar = () => {
       <div className='hidden xl:flex flex-row justify-center items-center gap-1'>
         <Button variant='text'
           sx={{textTransform: 'none', color: '#fff'}} 
-          onClick={()=>router.push("/")} startIcon={<Home sx={{width: 18, height: 18, color: '#fff'}}/>} endIcon={<KeyboardArrowDown sx={{width: 18, height: 18, color: '#fff'}}/>}>Home</Button>
+          onClick={()=>router.push("/")} startIcon={<Home sx={{width: 18, height: 18, color: '#fff'}}/>}>Home</Button>
         <Button variant='text'
           sx={{textTransform: 'none', color: '#fff'}} 
           onClick={()=>setOpenCategory(val=>!val)} endIcon={<KeyboardArrowDown sx={{width: 18, height: 18, color: '#fff'}}/>}>Products</Button>
