@@ -69,7 +69,7 @@ const HomeSlider = ({width}) => {
             imageUrl = "none";
           }
           else{
-            imageUrl = "http://localhost:8000/"+val.image_url;
+            imageUrl = "http://tm-web.effisoftsolutions.com/"+val.image_url;
           }
           var position = {};
           if(val.position=="top_start"){
@@ -142,16 +142,16 @@ const HomeSlider = ({width}) => {
   }
 
   return (
-    <div className='w-full max-w-6xl bg-white py-0 relative'>
+    <div className='w-full max-w-7xl py-0 relative bg-slate-50'>
       {isLoading?
-        <div className='flex flex-col items-center justify-center w-full h-[300px] lg:h-[300px] sm:h-[250px] xs:h-[150px] bg-slate-200'>
+        <div className='flex flex-col items-center justify-center w-full h-[100px] xs:h-[200px] sm:h-[200px] lg:h-[400px]'>
           <CircularProgress size={30} style={{color:"#71717a"}} />
           <span className="text-sm mt-5 font-semibold text-gray-700">Loading...</span>
         </div>:
         <Slider {...settings}>
           {slides.map(val=>
-            <div key={val.id} className='flex flex-col justify-center items-center relative my-0'>
-              <img src={val.image_url} alt='slider image' style={{margin: 0, width: width>1152?(1152):(width)}}/>
+            <div key={val.image_url} className='flex flex-col justify-center items-center relative my-0'>
+              <img src={val.image_url} alt='slider image' style={{margin: 0, width: width>1280?(1280):(width)}}/>
               {val.show_caption==="yes" &&
                 <div className='flex flex-col w-full lg:max-w-[600px] lg:opacity-70 px-2 py-2' style={width<1024?{backgroundColor: val.position.backgroundColor}:val.position}>
                   <span className='opacity-100 font-bold text-sm h-[20px] overflow-hidden' style={{color: val.styles.headingColor}}>{val.heading}</span>

@@ -1,165 +1,90 @@
 'use client';
 import { useRouter, usePathname } from 'next/navigation';
-import { useState, useEffect, useRef } from 'react';
-import { Avatar, Button, CircularProgress, ClickAwayListener, Grow, IconButton, MenuItem, MenuList, Paper, Popper } from "@mui/material";
-import { CameraAlt, Check, Close, Home, KeyboardArrowDown, KeyboardArrowRight, Menu, Search } from "@mui/icons-material";
-import axios from "axios";
-import useWindowDimensions from '@/hooks/useWindowDimension';
-import Image from 'next/image';
+import { useState, useRef } from 'react';
+import { Button, ClickAwayListener, Grow, IconButton, MenuItem, MenuList, Paper, Popper } from "@mui/material";
+import { Check, ContactPage, Home, KeyboardArrowDown, KeyboardArrowRight, Menu, Search } from "@mui/icons-material";
 import { useSearchContext } from '@/providers/SearchContextProvider';
+import CategoriesBrowser from '../browsers/CategoriesBrowser';
+import BrandsBrowser from '../browsers/BrandsBrowser';
+import ServicesBrowser from '../browsers/ServicesBrowser';
+import ShopsBrowser from '../browsers/ShopsBrowser';
+import SparePartsBrowser from '../browsers/SparePartsBrowser';
 
-const Navbar = () => {
-  const [isLoading1, setIsLoading1] = useState(false);
-  const [isLoading2, setIsLoading2] = useState(false);
-  const [serverError, setServerError] = useState(false);
-  const { width=500, height=500 } = useWindowDimensions();
+const Navbar = ({search, applyFilters}) => {
   const router = useRouter();
   const pathname = usePathname();
-  const {setContextDescription, setContextCategory, setContextSubCategory, setContextBrand} = useSearchContext();
+  const {contextDescription, setContextDescription} = useSearchContext();
 
   const [openMenu, setOpenMenu] = useState(false);
   const menuRef = useRef(null);
   const categoryRef = useRef(null);
   const brandRef = useRef(null);
-
-  const [description, setDescription] = useState("");
+  const sparePartRef = useRef(null);
+  const serviceRef = useRef(null);
+  const shopRef = useRef(null);
 
   const [openCategory, setOpenCategory] = useState(false);
   const [openBrand, setOpenBrand] = useState(false);
-
-  const [categories, setCategories] = useState([]);
-  const [brands, setBrands] = useState([]);
+  const [openSpareParts, setOpenSpareParts] = useState(false);
+  const [openServices, setOpenServices] = useState(false);
+  const [openShops, setOpenShops] = useState(false);
 
   function handleListKeyDown(event){
     if(event.key==='Tab') {
       event.preventDefault();
       setOpenMenu(false);
-      setOpenCategory(false);
-      setOpenBrand(false);
     } 
     else if(event.key==='Escape'){
       setOpenMenu(false);
-      setOpenCategory(false);
-      setOpenBrand(false);
-    }
-  }
-
-  useEffect(() => {
-    if(openCategory) getCategories();
-  }, [openCategory]);
-
-  useEffect(() => {
-    if(openBrand) getBrands();
-  }, [openBrand]);
-
-  async function getCategories(){
-    try{
-      setServerError(false);
-      setIsLoading1(true);
-      var error = false;
-      if(!error){
-        const response = await axios.post("/api/categories/find-sub-categories-for-home-search/", {});
-        const values = [];
-        response.data.data.rows.map(val => {
-          var imageUrl = "";
-          if(val.image_url==="none"){
-            imageUrl = "none";
-          }
-          else{
-            imageUrl = "http://localhost:8000/"+val.image_url;
-          }
-          var sub_categories = [];
-          val.sub_categories.map(val1=>{
-            var imageUrl1 = "";
-            if(val1.image_url==="none"){
-              imageUrl1 = "none";
-            }
-            else{
-              imageUrl1 = "http://localhost:8000/"+val1.image_url;
-            }
-            sub_categories.push({
-              id: val1.id,
-              description: val1.description,
-              code: val1.code,
-              image_url: imageUrl1,
-            });
-          });
-          values.push({
-            id: val.id,
-            description: val.description,
-            code: val.code,
-            image_url: imageUrl,
-            sub_categories: sub_categories,
-          });
-        });
-        setCategories(values);
-      }
-    }
-    catch(error){
-      setServerError(true);
-    }
-    finally{
-      setIsLoading1(false);
     }
   };
 
-  async function getBrands(){
-    try{
-      setServerError(false);
-      setIsLoading2(true);
-      var error = false;
-      if(!error){
-        const response = await axios.post("/api/brands/active/", {});
-        const values = [];
-        response.data.data.rows.map(val => {
-          var imageUrl = "";
-          if(val.image_url==="none"){
-            imageUrl = "none";
-          }
-          else{
-            imageUrl = "http://localhost:8000/"+val.image_url;
-          }
-          values.push({
-            id: val.id,
-            description: val.description,
-            code: val.code,
-            image_url: imageUrl,
-          });
-        });
-        setBrands(values);
-      }
-    }
-    catch(error){
-      setServerError(true);
-    }
-    finally{
-      setIsLoading2(false);
-    }
-  };
-
-  const categorySelected = (val, val1) => {
+  const categorySelected = (val) => {
     setOpenCategory(false);
-    setContextCategory({id: val.id, description: val.description});
-    setContextSubCategory({id: val1.id, description: val1.description});
-    router.push(`/products/search/`);
-  }
+    setContextDescription('');
+    router.push(`/products/search/category/${val.category.description}/sub-category/${val.subCategory.description}/`);
+  };
 
   const brandSelected = (val) => {
-    setContextBrand({id: val.id, description: val.description});
+    setContextDescription('');
     setOpenBrand(false);
-    router.push(`/products/search/`);
-  }
+    router.push(`/products/search/brand/${val.description}/`);
+  };
+
+  const sparePartSelected = (val) => {
+    setContextDescription('');
+    setOpenSpareParts(false);
+    router.push(`/spare-parts/search/`);
+  };
+
+  const serviceSelected = (val) => {
+    setContextDescription('');
+    setOpenServices(false);
+    router.push(`/services/search/`);
+  };
+
+  const shopSelected = (val) => {
+    setContextDescription('');
+    setOpenShops(false);
+    router.push(`/shop-locator/search/`);
+  };
 
   const searchClicked = (val) => {
-    setContextDescription(val);
-    router.push(`/products/search/`);
-  }
-
+    if(search){
+      applyFilters();
+    }
+    else{
+      router.push(`/products/search/description/${val}/`);
+    }    
+  };
   
   return (
-    <div className='flex flex-row w-full justify-between items-center max-w-7xl relative' style={{backgroundColor: '#77bd1f'}}>
+    <div className='flex flex-row w-full justify-between items-center max-w-7xl mt-[43px] fixed top-0 z-50' style={{backgroundColor: '#77bd1f'}}>
       <span ref={categoryRef} className='w-[0px] h-[30px] absolute top-2 left-0'/>
       <span ref={brandRef} className='w-[0px] h-[30px] absolute top-2 left-0'/>
+      <span ref={sparePartRef} className='w-[0px] h-[30px] absolute top-2 left-0'/>
+      <span ref={serviceRef} className='w-[0px] h-[30px] absolute top-2 left-0'/>
+      <span ref={shopRef} className='w-[0px] h-[30px] absolute top-2 left-0'/>
       <div className='hidden xl:flex flex-row justify-center items-center gap-1'>
         <Button variant='text'
           sx={{textTransform: 'none', color: '#fff'}} 
@@ -172,17 +97,16 @@ const Navbar = () => {
           onClick={()=>setOpenBrand(val=>!val)} endIcon={<KeyboardArrowDown sx={{width: 18, height: 18, color: '#fff'}}/>}>Brands</Button>
         <Button variant='text'
           sx={{textTransform: 'none', color: '#fff'}} 
-          onClick={()=>router.push("/spares")} endIcon={pathname.indexOf('/spares')>=0?<Check sx={{width: 18, height: 18, color: '#fff'}}/>:<KeyboardArrowDown sx={{width: 18, height: 18, color: '#fff'}}/>}>Spares</Button>
+          onClick={()=>setOpenSpareParts(val=>!val)} endIcon={<KeyboardArrowDown sx={{width: 18, height: 18, color: '#fff'}}/>}>Spare Parts</Button>
         <Button variant='text'
           sx={{textTransform: 'none', color: '#fff'}} 
-          onClick={()=>router.push("/installations")} endIcon={pathname.indexOf('/installations')>=0?<Check sx={{width: 18, height: 18, color: '#fff'}}/>:<KeyboardArrowDown sx={{width: 18, height: 18, color: '#fff'}}/>}>Installations</Button>
+          onClick={()=>setOpenServices(val=>!val)} endIcon={<KeyboardArrowDown sx={{width: 18, height: 18, color: '#fff'}}/>}>Services</Button>
         <Button variant='text'
           sx={{textTransform: 'none', color: '#fff'}} 
-          onClick={()=>router.push("/shop-locator")} endIcon={pathname.indexOf('/shop-locator')>=0?<Check sx={{width: 18, height: 18, color: '#fff'}}/>:<KeyboardArrowDown sx={{width: 18, height: 18, color: '#fff'}}/>}>Shop Locator</Button>
+          onClick={()=>setOpenShops(val=>!val)} endIcon={<KeyboardArrowDown sx={{width: 18, height: 18, color: '#fff'}}/>}>Shop Locator</Button>
         <Button variant='text'
           sx={{textTransform: 'none', color: '#fff'}} 
-          onClick={()=>router.push("/services")} endIcon={pathname.indexOf('/services')>=0?<Check sx={{width: 18, height: 18, color: '#fff'}}/>:<KeyboardArrowDown sx={{width: 18, height: 18, color: '#fff'}}/>}>Services</Button>
-        
+          onClick={()=>router.push("/contact-us")} startIcon={pathname.indexOf('/contact-us')>=0?<Check sx={{width: 18, height: 18, color: '#fff'}}/>:<ContactPage sx={{width: 18, height: 18, color: '#fff'}}/>}>Contact Us</Button>        
       </div>
       <div className='flex xl:hidden w-full justify-start items-center relative' style={{backgroundColor: '#77bd1f'}}>
         <IconButton ref={menuRef} size='small' onClick={()=>setOpenMenu(true)}><Menu sx={{width: 28, height: 28, color: '#fff'}}/></IconButton>
@@ -213,7 +137,6 @@ const Navbar = () => {
                       <div className='flex w-full justify-between items-center pb-2' style={{borderBottom: '1px solid #fff'}}>
                         <Home sx={{width: 18, height: 18, color: '#fff'}}/>
                         <span className='flex flex-1 text-sm text-white font-semibold pl-1'>Home</span>
-                        <KeyboardArrowRight sx={{width: 22, height: 22, color: '#fff'}}/>
                       </div>
                     </MenuItem>
                     <MenuItem
@@ -243,52 +166,51 @@ const Navbar = () => {
                     <MenuItem
                       onClick={()=>{
                         setOpenMenu(false);
-                        router.push("/spares");
+                        setOpenSpareParts(val=>!val);
                       }}
                       size='small'
                     >
                       <div className='flex w-full justify-between items-center pb-2' style={{borderBottom: '1px solid #fff'}}>
-                        <span className='text-sm text-white font-semibold'>Spares</span>
-                        {pathname.indexOf('/spares')>=0?<Check sx={{width: 22, height: 22, color: '#fff'}}/>:<KeyboardArrowRight sx={{width: 22, height: 22, color: '#fff'}}/>}
+                        <span className='text-sm text-white font-semibold'>Spare Parts</span>
+                        <KeyboardArrowRight sx={{width: 22, height: 22, color: '#fff'}}/>
                       </div>
                     </MenuItem>
                     <MenuItem
                       onClick={()=>{
                         setOpenMenu(false);
-                        router.push("/installations");
+                        setOpenServices(val=>!val);
                       }}
                       size='small'
                     >
                       <div className='flex w-full justify-between items-center pb-2' style={{borderBottom: '1px solid #fff'}}>
-                        <span className='text-sm text-white font-semibold'>Installations</span>
-                        {pathname.indexOf('/installations')>=0?<Check sx={{width: 22, height: 22, color: '#fff'}}/>:<KeyboardArrowRight sx={{width: 22, height: 22, color: '#fff'}}/>}
+                        <span className='text-sm text-white font-semibold'>Services</span>
+                        <KeyboardArrowRight sx={{width: 22, height: 22, color: '#fff'}}/>
                       </div>
                     </MenuItem>
                     <MenuItem
                       onClick={()=>{
                         setOpenMenu(false);
-                        router.push("/shop-locator");
+                        setOpenShops(val=>!val);
                       }}
                       size='small'
                     >
                       <div className='flex w-full justify-between items-center pb-2' style={{borderBottom: '1px solid #fff'}}>
                         <span className='text-sm text-white font-semibold'>Shop Locator</span>
-                        {pathname.indexOf('/shop-locator')>=0?<Check sx={{width: 22, height: 22, color: '#fff'}}/>:<KeyboardArrowRight sx={{width: 22, height: 22, color: '#fff'}}/>}
+                        <KeyboardArrowRight sx={{width: 22, height: 22, color: '#fff'}}/>
                       </div>
                     </MenuItem>
                     <MenuItem
                       onClick={()=>{
                         setOpenMenu(false);
-                        router.push("/services");
+                        router.push("/contact-us");
                       }}
                       size='small'
                     >
-                      <div className='flex w-full justify-between items-center'>
-                        <span className='text-sm text-white font-semibold'>Services</span>
-                        {pathname.indexOf('/services')>=0?<Check sx={{width: 22, height: 22, color: '#fff'}}/>:<KeyboardArrowRight sx={{width: 22, height: 22, color: '#fff'}}/>}
+                      <div className='flex w-full justify-start items-center'>
+                        {pathname.indexOf('/contact-us')>=0?<Check sx={{width: 22, height: 22, color: '#fff'}}/>:<ContactPage sx={{width: 22, height: 22, color: '#fff'}}/>}
+                        <span className='text-sm text-white font-semibold'>Contact Us</span>
                       </div>
-                    </MenuItem>
-                    
+                    </MenuItem>                    
                   </MenuList>
                 </ClickAwayListener>
               </Paper>
@@ -297,18 +219,23 @@ const Navbar = () => {
         </Popper>
       </div>
       <div className='flex flex-row justify-center items-center'>
-        <div className='flex flex-row justify-center items-center bg-white p-1 w-[250px]'>
+        <div className='flex flex-row justify-center items-center bg-white p-1 w-[120px] xxs:w-[250px]'>
           <Search sx={{width: 22, height: 22, color: '#94a3b8'}}/>
-          <input type='text' className='border-none outline-none w-full' onChange={(e)=>setDescription(e.target.value)}/>
+          <input type='text' className='border-none outline-none w-full' value={contextDescription} onChange={(e)=>setContextDescription(e.target.value)}/>
         </div>
-        <Button 
-          variant='text' 
-          style={{textTransform: 'none'}} 
-          startIcon={<Search />}
-          onClick={searchClicked}
-          size='small'
-          sx={{color: '#fff'}}
-        >Search</Button>
+        <div className='hidden ssx:flex'>
+          <Button 
+            variant='text' 
+            style={{textTransform: 'none'}} 
+            startIcon={<Search />}
+            onClick={()=>searchClicked(contextDescription)}
+            size='small'
+            sx={{color: '#fff'}}
+          >Search</Button>
+        </div>
+        <div className='flex ssx:hidden'>
+          <IconButton onClick={()=>searchClicked(contextDescription)}><Search sx={{width: 22, height: 22, color: '#fff'}}/></IconButton>
+        </div>        
       </div>
       <Popper
         open={openCategory}
@@ -319,50 +246,7 @@ const Navbar = () => {
       >
         {({TransitionProps}) => (
           <Grow {...TransitionProps}>
-            <Paper className='flex flex-col w-[100%] max-w-7xl'>
-              <ClickAwayListener onClickAway={()=>setOpenCategory(false)}>
-                {isLoading1 ? 
-                  <div className='flex flex-col items-center justify-center w-full min-h-[200px] lg:h-[300px] sm:h-[250px] xs:h-[150px] bg-slate-100 shadow-xl' style={{width: width>=1280?1280:(width)}}>
-                    <CircularProgress size={30} style={{color:"#71717a"}} />
-                    <span className="text-sm mt-5 font-semibold text-gray-700">{"Loading..."}</span>
-                  </div>:
-                  <div className='flex flex-col justify-start items-start w-[100%] pb-2 px-3 bg-white shadow-xl' style={{width: width>=1280?1280:(width)}}>
-                    <div className='flex flex-row justify-between items-center w-full pt-2'>
-                      <span className='text-md font-semibold text-emerald-700'>{}</span>
-                      <IconButton onClick={()=>setOpenCategory(false)} sx={{width: 30, height: 30, borderRadius: 15, color: '#fff', backgroundColor: '#9CA3AF'}}><Close sx={{width: 20, height: 20, color: '#ffffff'}}/></IconButton>
-                    </div>
-                    <div className='flex flex-row justify-start items-start w-full flex-wrap max-h-[600px] overflow-y-auto pt-1 pb-3'>
-                      {categories.map(val=>
-                        <div key={val.id} className='flex flex-col justify-center items-start w-[90%] xs:w-[175px] sm:w-[175px] md:w-[220px] gap-2 py-3 px-1 mr-0 xs:mr-5'>
-                          <div className='flex flex-row justify-start items-center w-full h-[40px] bg-[#dcfce7] gap-2 px-1'>
-                            <div className='flex flex-col justify-center items-center w-[30px] h-[30px]'>
-                              {val.image_url==="none" ? 
-                                <CameraAlt sx={{width: 30, height: 30, color: '#cbd5e1'}}/> : 
-                                <Avatar src={val.image_url} sx={{width: 30, height: 30}}/>
-                              }
-                            </div>
-                            <span className='text-xs lg:text-sm'>{val.description}</span>
-                          </div>
-                          <div className='flex flex-col justify-center items-center w-full pr-2'>
-                            {val.sub_categories.map(val1=>
-                              <div key={val1.id} className='flex flex-row justify-start items-center w-full h-[40px] gap-2 py-3 px-1 cursor-pointer hover:bg-slate-100' style={{borderRight: width>440?('1px solid #D1D5DB'):'none'}} onClick={()=>categorySelected(val, val1)}>
-                                <div className='flex flex-col justify-center items-center w-[30px] h-[30px]'>
-                                  {val1.image_url==="none" ? 
-                                    <CameraAlt sx={{width: 30, height: 30, color: '#cbd5e1'}}/> : 
-                                    <Avatar src={val1.image_url} sx={{width: 30, height: 30}}/>
-                                  }
-                                </div>
-                                <span className='text-xs lg:text-sm'>{val1.description}</span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                }
-              </ClickAwayListener>
-            </Paper>
+            <div><CategoriesBrowser value={{}} valueSelected={categorySelected} setOpen={setOpenCategory} includeParts={false}/></div>
           </Grow>
         )}
       </Popper>
@@ -375,40 +259,51 @@ const Navbar = () => {
       >
         {({TransitionProps}) => (
           <Grow {...TransitionProps}>
-            <Paper className='flex flex-col w-[100%] max-w-7xl'>
-              <ClickAwayListener onClickAway={()=>setOpenBrand(false)}>
-                {isLoading2 ? 
-                  <div className='flex flex-col items-center justify-center w-full min-h-[200px] lg:h-[300px] sm:h-[250px] xs:h-[150px] bg-slate-100 shadow-xl' style={{width: width>=1280?1280:(width)}}>
-                    <CircularProgress size={30} style={{color:"#71717a"}} />
-                    <span className="text-sm mt-5 font-semibold text-gray-700">{"Loading..."}</span>
-                  </div>:
-                  <div className='flex flex-col justify-start items-start w-[100%] pb-2 px-3 bg-white shadow-xl' style={{width: width>=1280?1280:(width)}}>
-                    <div className='flex flex-row justify-between items-center w-full py-2'>
-                      <span className='text-md font-semibold text-emerald-700'>{}</span>
-                      <IconButton onClick={()=>setOpenBrand(false)} sx={{width: 30, height: 30, borderRadius: 15, color: '#fff', backgroundColor: '#9CA3AF'}}><Close sx={{width: 20, height: 20, color: '#ffffff'}}/></IconButton>
-                    </div>
-                    <div className='flex flex-row justify-start items-start w-full flex-wrap max-h-[600px] overflow-y-auto pt-2 xs:pt-5 pb-3'>
-                      {brands.map(val=>
-                        <div key={val.id} className='flex flex-row justify-start items-center w-[90%] xs:w-[175px] sm:w-[175px] md:w-[220px] gap-2 py-3 px-1 mr-0 xs:mr-5 cursor-pointer hover:bg-slate-100' style={{borderRight: width>440?('1px solid #D1D5DB'):'none'}} onClick={()=>brandSelected(val)}>
-                          <div className='flex flex-col justify-center items-center w-[80px] h-[30px] relative'>
-                            {val.image_url==="none" ? 
-                              <CameraAlt sx={{width: 30, height: 30, color: '#cbd5e1'}}/> : 
-                              <Image src={val.image_url} alt="brand image" fill sizes='80px' priority={true} style={{objectFit: 'contain'}}/>
-                            }
-                          </div>
-                          <span className='text-xs lg:text-sm'>{val.description}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                }
-              </ClickAwayListener>
-            </Paper>
+            <div><BrandsBrowser value={{}} valueSelected={brandSelected} setOpen={setOpenBrand} /></div>
+          </Grow>
+        )}
+      </Popper>
+      <Popper
+        open={openSpareParts}
+        anchorEl={sparePartRef.current}
+        placement='bottom-start'
+        transition={true}
+        style={{zIndex: 50}}
+      >
+        {({TransitionProps}) => (
+          <Grow {...TransitionProps}>
+            <div><SparePartsBrowser value={{}} valueSelected={sparePartSelected} setOpen={setOpenSpareParts} /></div>
+          </Grow>
+        )}
+      </Popper>
+      <Popper
+        open={openServices}
+        anchorEl={serviceRef.current}
+        placement='bottom-start'
+        transition={true}
+        style={{zIndex: 50}}
+      >
+        {({TransitionProps}) => (
+          <Grow {...TransitionProps}>
+            <div><ServicesBrowser value={{}} valueSelected={serviceSelected} setOpen={setOpenServices} /></div>
+          </Grow>
+        )}
+      </Popper>
+      <Popper
+        open={openShops}
+        anchorEl={shopRef.current}
+        placement='bottom-start'
+        transition={true}
+        style={{zIndex: 50}}
+      >
+        {({TransitionProps}) => (
+          <Grow {...TransitionProps}>
+            <div><ShopsBrowser value={{}} valueSelected={shopSelected} setOpen={setOpenShops} /></div>
           </Grow>
         )}
       </Popper>
     </div>
-  )
-}
+  );
+};
 
 export default Navbar;

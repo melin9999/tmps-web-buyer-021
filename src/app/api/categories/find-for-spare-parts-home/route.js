@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 export async function POST(req){
   try{
     const body = await req.json();
-    const res = await fetch("http://localhost:8000/categories/find-sub-categories-for-home-search", {
+    const res = await fetch("http://tm-web.effisoftsolutions.com/categories/find-for-spare-parts-home", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

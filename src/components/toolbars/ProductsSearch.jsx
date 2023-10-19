@@ -1,78 +1,73 @@
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from "axios";
-import { ArrowDropDown, CameraAlt, Close, ExpandMore, ImportExport } from "@mui/icons-material";
-import { Accordion, AccordionDetails, AccordionSummary, Avatar, Checkbox, CircularProgress, ClickAwayListener, FormControlLabel, Grow, IconButton, InputAdornment, MenuItem, Paper, Popper, Slider, TextField } from "@mui/material";
+import { ArrowRight, Check, ExpandMore } from "@mui/icons-material";
+import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Button, Checkbox, 
+  CircularProgress, FormControlLabel, Grow, InputAdornment, MenuItem, Popper, TextField } from "@mui/material";
 import Image from 'next/image';
+import CategoriesBrowser from '../browsers/CategoriesBrowser';
+import BrandsBrowser from '../browsers/BrandsBrowser';
 
-const ProductsSearch = ({searchCategory, setSearchCategory, searchBrand, setSearchBrand, searchModel, 
-  setSearchModel, searchSortBy, setSearchSortBy, searchOrder, setSearchOrder, editItemFeatures, setEditItemFeatures, width}) => {
+const ProductsSearch = ({categoryRef, applyFilters, searchSortBy, setSearchSortBy, 
+  searchOrder, setSearchOrder, searchPriceMin, setSearchPriceMin, searchPriceMax, setSearchPriceMax, 
+  searchCategory, setSearchCategory, searchSubCategory, setSearchSubCategory, searchBrand, setSearchBrand, 
+  searchSelectedBrands, setSearchSelectedBrands, searchModel, setSearchModel, 
+  searchSelectedFeatures, setSearchSelectedFeatures
+}) => {
   const [isLoading1, setIsLoading1] = useState(true);
   const [isLoading2, setIsLoading2] = useState(true);
   const [isLoading3, setIsLoading3] = useState(true);
-  const [isLoading4, setIsLoading4] = useState(true);
   const [serverError, setServerError] = useState(false);
 
-  const [browserWidth, setBrowserWidth] = useState(750);
   const [openBrand, setOpenBrand] = useState(false);
-  const [openModel, setOpenModel] = useState(false);
   const [openCategory, setOpenCategory] = useState(false);
-  const [categories, setCategories] = useState([]);
-  const [brands, setBrands] = useState([]);
-  const [models, setModels] = useState([]);
-  const categoryRef = useRef(null);
-  const brandRef = useRef(null);
-  const modelRef = useRef(null);
+  const [searchSubCategories, setSearchSubCategories] = useState([]);
+  const [searchBrands, setSearchBrands] = useState([]);
   const [searchFeatures, setSearchFeatures] = useState([]);
 
   useEffect(() => {
-    if(width>=1152){
-      setBrowserWidth(750);
-    }
-    else if(width>=768 && width<1152){
-      setBrowserWidth(width-270);
-    }
-    else{
-      setBrowserWidth(width-20);
-    }
-  }, [width]);
+    setServerError(false);
+    setIsLoading1(false);
+    setIsLoading2(false);
+    setIsLoading3(false);
+  }, []);
+  
 
   useEffect(() => {
-    if(openCategory) getCategories();
-  }, [openCategory]);
-
-  useEffect(() => {
-    if(openBrand) getBrands();
-  }, [openBrand]);
-
-  useEffect(() => {
-    if(openModel) getModels();
-  }, [openModel]);
-
-  async function getCategories(){
+    if(searchCategory.id>0){
+      getSubCategories();
+    }
+  }, [searchCategory]);
+  
+  const getSubCategories = async () => {
     try{
-      setServerError(false);
-      setIsLoading1(true);
-      var error = false;
-      if(!error){
-        const response = await axios.post("/api/supportdata/categories/", {});
-        const values = [];
-        response.data.data.rows.map(val => {
-          var imageUrl = "";
-          if(val.image_url==="none"){
-            imageUrl = "none";
-          }
-          else{
-            imageUrl = "http://localhost:8000/"+val.image_url;
-          }
-          values.push({
-            id: val.id,
-            description: val.description,
-            code: val.code,
-            image_url: imageUrl,
-          });
+      if(searchCategory.id>0){
+        setIsLoading1(true);
+        setServerError(false);
+        const response = await axios.post(`/api/sub-categories/find-for-category`, {
+          categoryId: parseInt(searchCategory.id),
         });
-        setCategories(values);
+        if (!response.data.error) {
+          var values = [];
+          response.data.data.rows.map(val=>{     
+            var imageUrl = "";
+            if(val.image_url==="none"){
+              imageUrl = "none";
+            }
+            else{
+              imageUrl = "http://tm-web.effisoftsolutions.com/"+val.image_url;
+            }     
+            values.push({
+              id: val.id,
+              description: val.description,
+              image_url: imageUrl
+            });
+          });
+          setSearchSubCategories(values);
+        } 
+      }
+      else{
+        setSearchSubCategories([]);
       }
     }
     catch(error){
@@ -81,32 +76,44 @@ const ProductsSearch = ({searchCategory, setSearchCategory, searchBrand, setSear
     finally{
       setIsLoading1(false);
     }
-  }
+  };
 
-  async function getBrands(){
+  useEffect(() => {
+    getBrands();
+    getFeatures();
+  }, [searchSubCategory]);
+  
+  const getBrands = async () => {
     try{
-      setServerError(false);
       setIsLoading2(true);
-      var error = false;
-      if(!error){
-        const response = await axios.post("/api/supportdata/brands/", {});
-        const values = [];
-        response.data.data.rows.map(val => {
+      setServerError(false);
+      var search_data = {};
+      if(searchCategory.id !== 0){
+        search_data["categoryId"] = (searchCategory.id);
+      }
+      if(searchSubCategory.id !== 0){
+        search_data["subCategoryId"] = (searchSubCategory.id);
+      }
+      const response = await axios.post(`/api/brands/find-for-sub-category`, {
+        search_data: search_data,
+      });
+      if (!response.data.error) {
+        var values = [];
+        response.data.data.map(val=>{     
           var imageUrl = "";
-          if(val.image_url==="none"){
+          if(val.brand.image_url==="none"){
             imageUrl = "none";
           }
           else{
-            imageUrl = "http://localhost:8000/"+val.image_url;
-          }
+            imageUrl = "http://tm-web.effisoftsolutions.com/"+val.brand.image_url;
+          }     
           values.push({
-            id: val.id,
-            description: val.description,
-            code: val.code,
-            image_url: imageUrl,
+            id: val.brand_id,
+            description: val.brand.description,
+            image_url: imageUrl
           });
         });
-        setBrands(values);
+        setSearchBrands(values);
       }
     }
     catch(error){
@@ -115,42 +122,53 @@ const ProductsSearch = ({searchCategory, setSearchCategory, searchBrand, setSear
     finally{
       setIsLoading2(false);
     }
-  }
-
-  async function getModels(){
+  };
+  
+  const getFeatures = async () => {
     try{
-      setServerError(false);
-      setIsLoading3(true);
-      var error = false;
-      if(!error){
-        const response = await axios.post("/api/supportdata/models/", {});
-        const values = [];
-        response.data.data.rows.map(val => {
-          var add = false;
-          if(searchBrand.id>0){
-            if(val.brand_id===searchBrand.id){
-              add = true;
-            }
-          }
-          else{
-            add = true;
-          }
-          if(add){
-            if(val.image_url==="none"){
+      if(searchSubCategory.id>0){
+        setIsLoading3(true);
+        setServerError(false);
+        const response = await axios.post(`/api/features/find-for-sub-category`, {
+          sub_category_id: searchSubCategory.id,
+        });
+        if (!response.data.error) {
+          var values = [];
+          response.data.data.map(val=>{
+            var imageUrl = "";
+            if(val.feature.image_url==="none"){
               imageUrl = "none";
             }
             else{
-              imageUrl = "http://localhost:8000/"+val.image_url;
+              imageUrl = "http://tm-web.effisoftsolutions.com/"+val.feature.image_url;
             }
-            values.push({
-              id: val.id,
-              description: val.description,
-              brandId: val.brand_id,
-              brandDescription: val.brand.description,
+            var values1 = [];
+            val.feature.sub_features.map(val1=>{
+              var imageUrl1 = "";
+              if(val1.image_url==="none"){
+                imageUrl1 = "none";
+              }
+              else{
+                imageUrl1 = "http://tm-web.effisoftsolutions.com/"+val1.image_url;
+              }
+              values1.push({
+                id: val1.id,
+                description: val1.description,
+                image_url: imageUrl1
+              });
             });
-          }
-        });
-        setModels(values);
+            values.push({
+              id: val.feature.id,
+              description: val.feature.description,
+              image_url: imageUrl,
+              sub_features: values1
+            });
+          });
+          setSearchFeatures(values);
+        } 
+      }
+      else{
+        setSearchFeatures([]);
       }
     }
     catch(error){
@@ -159,330 +177,356 @@ const ProductsSearch = ({searchCategory, setSearchCategory, searchBrand, setSear
     finally{
       setIsLoading3(false);
     }
-  }
+  };
 
-  useEffect(() => {
-    if(searchCategory.id===0){
-      getFeatures();
+  const categorySelected = (val) => {
+    setOpenCategory(false);
+    setSearchCategory(val.category);
+    setSearchSubCategory(val.subCategory);
+    setSearchBrand({id: 0, description: "All", image_url: 'none'});
+    setSearchSelectedBrands([]);
+    setSearchSelectedFeatures([]);
+    applyFilters();
+  };
+
+  const subCategoryClicked = (val) => {
+    setSearchSubCategory({id: val.id, description: val.description, image_url: val.image_url});
+    setSearchBrand({id: 0, description: "All", image_url: 'none'});
+    setSearchSelectedBrands([]);
+    setSearchSelectedFeatures([]);
+    applyFilters();
+  };
+
+  const brandSelected = (val) => {
+    setOpenBrand(false);
+    setSearchBrand(val.brand);
+    setSearchSelectedBrands([]);
+    setSearchSelectedFeatures([]);
+    applyFilters();
+  };
+
+  const addSearchBrand = (val) => {
+    const index = searchSelectedBrands.findIndex(val1=>val1===parseInt(val));
+    if(index===-1){
+      let val2 = [...searchSelectedBrands];
+      val2.push(parseInt(val));
+      setSearchSelectedBrands(val2);
     }
     else{
-      getFeaturesForCategory();
+      let val2 = searchSelectedBrands.filter(val1=>val1!==parseInt(val));
+      setSearchSelectedBrands(val2);
     }
-  }, [searchCategory])
+  };
 
-  const getFeatures = async () => {
-    try{
-      setIsLoading4(true);
-      const response = await axios.post(`/api/features/active`, {});
-      if (!response.data.error) {
-        var values = [];
-        response.data.data.map(val=>{          
-          values.push({
-            id: val.id,
-            type: val.type,
-            description: val.description,
-            image_url: val.image_url,
-            sub_features: val.sub_features,
-          });
-        });
-        setSearchFeatures(values);
-      } 
-    }
-    catch(error){
-      
-    }
-    finally{
-      setIsLoading4(false);
-    }
-  }
+  const removeAllSearchBrands = () => {
+    setSearchSelectedBrands([]);
+    applyFilters();
+  };
 
-  const getFeaturesForCategory = async () => {
-    try{
-      setIsLoading4(true);
-      const response = await axios.post(`/api/features/find-for-category`, {
-        category_id: parseInt(searchCategory.id),
-      });
-      if (!response.data.error) {
-        var values = [];
-        response.data.data.map(val=>{          
-          values.push({
-            id: val.feature.id,
-            type: val.feature.type,
-            description: val.feature.description,
-            image_url: val.feature.image_url,
-            sub_features: val.feature.sub_features,
-          });
-        });
-        setSearchFeatures(values);
-      } 
+  const removeAllSearchPrices = () => {
+    setSearchPriceMin(0);
+    setSearchPriceMax(0);
+    applyFilters();
+  };
+
+  const removeAllSearchSort = () => {
+    setSearchSortBy('description');
+    setSearchOrder('ASC');
+    applyFilters();
+  };
+
+  const addSearchFeature = (val, val1) => {
+    const index = searchSelectedFeatures.findIndex(val2=>val2.id===parseInt(val));
+    if(index===-1){
+      let val3 = [...searchSelectedFeatures];
+      val3.push({id: parseInt(val), featureId: val1});
+      setSearchSelectedFeatures(val3);
     }
-    catch(error){
-      
+    else{
+      let val3 = searchSelectedFeatures.filter(val2=>val2.id!==parseInt(val));
+      setSearchSelectedFeatures(val3);
     }
-    finally{
-      setIsLoading4(false);
-    }
-  }
-  
-  const subFeatureAdded = async (value, type, featureId) => {
-    
+  };
+
+  const removeAllSearchFeatures = (val) => {
+    let val2 = searchSelectedFeatures.filter(val1=>val1.featureId!==parseInt(val));
+    setSearchFeatures(val2);
+    applyFilters();
+  };
+
+  const applyFiltersClicked = () => {
+    applyFilters();
   }
 
   return (
-    <div className='flex flex-col justify-center w-full items-start py-5 pl-2 relative bg-white'>
-      {width>=768 && 
-        <>
-          <span ref={categoryRef} className='w-[0px] h-[30px] absolute top-0 right-0'/>
-          <span ref={brandRef} className='w-[0px] h-[30px] absolute top-0 right-0'/>
-          <span ref={modelRef} className='w-[0px] h-[30px] absolute top-0 right-0'/>
-        </>
-      }
-      {width<768 && 
-        <>
-          <span ref={categoryRef} className='w-[0px] h-[30px] absolute top-0 left-0'/>
-          <span ref={brandRef} className='w-[0px] h-[30px] absolute top-0 left-0'/>
-          <span ref={modelRef} className='w-[0px] h-[30px] absolute top-0 left-0'/>
-        </>
-      }
-      <div className='flex flex-col mb-5 w-[230px]'>
-        <div className='flex justify-between items-center w-full rounded h-[35px] px-3 relative bg-white cursor-pointer' style={{border: '1px solid #bdbdbd'}}>
-          <span className='form_text_field_constructed_label'>Category</span>
-          <span className='form_text_field_constructed_text' onClick={()=>setOpenCategory(val=>!val)}>{searchCategory.description}</span>
-          <div className='form_text_field_constructed_actions'>
-            <Close sx={{width: 14, height: 14, color: '#6b7280'}} onClick={()=>setSearchCategory({id: 0, description: "All"})}/>
-            <ArrowDropDown sx={{width: 22, height: 22, color: '#6b7280'}} onClick={()=>setOpenCategory(val=>!val)}/>
-          </div>
-        </div>
-      </div>
-      <div className='flex flex-col mb-5 w-[230px]'>
-        <div className='flex justify-between items-center w-full rounded h-[35px] px-3 relative bg-white cursor-pointer' style={{border: '1px solid #bdbdbd'}}>
-          <span className='form_text_field_constructed_label'>Brand</span>
-          <span className='form_text_field_constructed_text' onClick={()=>setOpenBrand(val=>!val)}>{searchBrand.description}</span>
-          <div className='form_text_field_constructed_actions'>
-            <Close sx={{width: 14, height: 14, color: '#6b7280'}} onClick={()=>setSearchBrand({id: 0, description: "All"})}/>
-            <ArrowDropDown sx={{width: 22, height: 22, color: '#6b7280'}} onClick={()=>setOpenBrand(val=>!val)}/>
-          </div>
-        </div>
-      </div>
-      <div className='flex flex-col mb-5 w-[230px]'>
-        <div className='flex justify-between items-center w-full rounded h-[35px] px-3 relative bg-white cursor-pointer' style={{border: '1px solid #bdbdbd'}}>
-          <span className='form_text_field_constructed_label'>Model</span>
-          <span className='form_text_field_constructed_text' onClick={()=>setOpenModel(val=>!val)}>{searchModel.description}</span>
-          <div className='form_text_field_constructed_actions'>
-            <Close sx={{width: 14, height: 14, color: '#6b7280'}} onClick={()=>setSearchModel({id: 0, description: "All", brandId: 0, brandDescription: "All"})}/>
-            <ArrowDropDown sx={{width: 22, height: 22, color: '#6b7280'}} onClick={()=>setOpenModel(val=>!val)}/>
-          </div>
-        </div>
-      </div>
-
-      <div className='flex flex-col mb-5 w-[230px]'>
-        <TextField
-          className='form_text_field'
-          id='sort-by-2'
-          select={true}
-          value={searchSortBy}
-          onChange={event=>setSearchSortBy(event.target.value)} 
-          label='Sort By'
-          size='small'
-          inputProps={{style: {fontSize: 13}}}
-          SelectProps={{style: {fontSize: 13}}}
-          InputLabelProps={{style: {fontSize: 15}}}
-        >
-          <MenuItem value={"id"}>ID</MenuItem>
-          <MenuItem value={"index"}>Index</MenuItem>
-          <MenuItem value={"description"}>Description</MenuItem>
-          <MenuItem value={"status"}>Status</MenuItem>
-        </TextField>
-      </div>
-      <div className='flex flex-col mb-5 w-[230px]'>
-        <TextField
-          className='form_text_field'
-          id='order'
-          select={true}
-          value={searchOrder}
-          onChange={event=>setSearchOrder(event.target.value)} 
-          label='Order'
-          size='small'
-          InputProps={{
-            startAdornment: <InputAdornment position="start"><ImportExport sx={{width: 20, height: 20, color: '#666'}}/></InputAdornment>,
-          }}
-          inputProps={{style: {fontSize: 13}}}
-          SelectProps={{style: {fontSize: 13}}}
-          InputLabelProps={{style: {fontSize: 15}}}
-        >
-          <MenuItem value={"ASC"}>Ascending</MenuItem>
-          <MenuItem value={"DESC"}>Descending</MenuItem>
-        </TextField>
-      </div>
-
-      <div className='flex flex-col w-[230px]'>
-        <Accordion>
-          <AccordionSummary expandIcon={<ExpandMore />}>
-            <div className='flex flex-row justify-between items-center w-full'>
-              <span className='text-sm ml-2 w-full'>{"Price"}</span>
+    <div className='flex flex-col justify-center w-full items-start relative bg-white'>
+      <div className='flex flex-col justify-between items-center py-2 w-full' style={{borderBottom: '1px solid #e8e8e8'}}>
+        <div className='flex flex-row w-full justify-center items-center gap-2 px-3 py-2 cursor-pointer hover:bg-slate-100' onClick={()=>setOpenCategory(val=>!val)}>          
+          {searchCategory.image_url!=='none' &&
+            <div className='flex flex-col justify-center items-center w-[40px] h-[40px] relative'>
+              <Image src={searchCategory.image_url} alt="category image" fill sizes='40px' priority={true} style={{objectFit: 'contain', borderRadius: 20}}/>
             </div>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Slider defaultValue={50} aria-label="Default" valueLabelDisplay="auto" />
-          </AccordionDetails>
-        </Accordion>
-        {searchFeatures.length>0 && searchFeatures.map(val=>
-          <Accordion key={val.id}>
-            <AccordionSummary expandIcon={<ExpandMore />}>
-              <div className='flex flex-row justify-between items-center w-full'>
-                <div className='flex justify-center items-center w-[26px] h-[26px] rounded-[13px] relative overflow-hidden'>
-                  {val.image_url==="none" ? 
-                    <div></div> : 
-                    <Image src={"http://localhost:8000/"+val.image_url} alt="feature image" fill sizes='26px' priority={true} style={{objectFit: 'cover'}}/>
-                  }
-                </div>
-                <span className='text-sm ml-2 w-full'>{val.description}</span>
-              </div>
-            </AccordionSummary>
-            <AccordionDetails>
-              {val.sub_features.length>0 && val.sub_features.map(val1=>
-                <FormControlLabel key={val1.id} id={'sub-feature-'+val1.id}
-                  value={val1.id} checked={editItemFeatures.findIndex(val2=>val2.sub_feature_id===val1.id)>-1}
-                  onChange={(event)=>subFeatureAdded(event.target.value, val.type, val.id)}
-                  control={<Checkbox/>} 
-                  label={
-                    <div className='flex flex-row justify-start items-center w-[160px] overflow-hidden'>
-                      <div className='flex justify-center items-center w-[26px] h-[26px] rounded-[13px] relative overflow-hidden'>
-                        {val1.image_url==="none" ? 
-                          <span></span> : 
-                          <Image src={"http://localhost:8000/"+val1.image_url} alt="feature image" fill sizes='26px' priority={true} style={{objectFit: 'cover'}}/>
-                        }
+          }
+          <span className='flex flex-1 flex-col justify-center items-start text-sm text-zinc-700'>{searchCategory.id===0?"All Categories":searchCategory.description}</span>
+          <ArrowRight sx={{width: 22, height: 22, color: '#6b7280'}}/>
+        </div>
+        {isLoading1?
+          <div className='flex flex-col justify-center items-center h-[40px]'>
+            <CircularProgress size={30} style={{color:"#cbd5e1"}} />
+          </div>:
+          <>
+            {searchCategory.id>0 &&
+              <div className='flex flex-col justify-center items-start w-[220px] ml-[20px] relative' style={{borderLeft: '1px solid #e8e8e8'}}>
+                <div className='h-[23px] w-[5px] absolute bottom-[0px] -left-[2px]' style={{backgroundColor: '#fff'}}></div>
+                {searchSubCategories.map(val=>
+                  <div key={val.id+val.description} className='flex flex-row w-[210px] h-[32px] justify-center items-center gap-2 cursor-pointer hover:bg-slate-100 mb-2' style={{backgroundColor: val.id===searchSubCategory.id?'#f1f5f9':'#fff'}} onClick={()=>subCategoryClicked(val)}>
+                    <div className='h-[1px] w-[10px]' style={{backgroundColor: '#e8e8e8'}}></div>
+                    {val.image_url!=='none' &&
+                      <div className='flex flex-col justify-center items-center w-[30px] h-[30px] relative'>
+                        <Image src={val.image_url} alt="sub category image" fill sizes='30px' priority={true} style={{objectFit: 'contain', borderRadius: 15}}/>
                       </div>
-                      <span className="text-sm mb-1 ml-3">{val1.description}</span>
+                    }
+                    <span className='flex flex-1 flex-col justify-center items-left text-xs text-zinc-700'>{val.description}</span>
+                  </div>
+                )}
+              </div>
+            }
+          </>
+        }
+      </div>
+      <Popper
+        open={openCategory}
+        anchorEl={categoryRef.current}
+        placement={'bottom-start'}
+        transition={true}
+        style={{zIndex: 50}}
+      >
+        {({TransitionProps}) => (
+          <Grow {...TransitionProps}>
+            <div><CategoriesBrowser value={{}} valueSelected={categorySelected} setOpen={setOpenCategory} includeParts={true}/></div>
+          </Grow>
+        )}
+      </Popper>
+      
+      {searchBrand.id>0 &&
+      <>
+        <div className='flex flex-col justify-between items-center py-2 w-full' style={{borderBottom: '1px solid #e8e8e8'}}>
+          <div className='flex flex-row w-full justify-center items-center gap-2 px-3 py-2 cursor-pointer hover:bg-slate-100' onClick={()=>setOpenBrand(val=>!val)}>          
+            {searchBrand.image_url!=='none' &&
+              <div className='flex flex-col justify-center items-center w-[40px] h-[20px] relative'>
+                <Image src={searchBrand.image_url} alt="brand image" fill sizes='40px' priority={true} style={{objectFit: 'contain'}}/>
+              </div>
+            }
+            <span className='flex flex-1 flex-col justify-center items-start text-sm text-zinc-700'>{searchBrand.description}</span>
+            <ArrowRight sx={{width: 22, height: 22, color: '#6b7280'}}/>
+          </div>
+        </div>
+        <Popper
+            open={openBrand}
+            anchorEl={categoryRef.current}
+            placement='bottom-start'
+            transition={true}
+            style={{zIndex: 50}}
+          >
+            {({TransitionProps}) => (
+              <Grow {...TransitionProps}>
+                <div><BrandsBrowser value={{}} valueSelected={brandSelected} setOpen={setOpenBrand} /></div>
+              </Grow>
+            )}
+          </Popper>
+        </>
+      }
+
+      {searchSubCategory.id>0 &&
+        <div className='flex flex-col justify-center items-center w-full' style={{borderBottom: '1px solid #e8e8e8'}}>
+          <Accordion className='w-full' defaultExpanded={false} square={true} disableGutters={true} sx={{padding: 0, margin: 0, paddingX: 2, boxShadow: 'none'}}>
+            <AccordionSummary expandIcon={<ExpandMore />} sx={{padding: 0, margin: 0}}>
+              <span className='text-sm w-full'>{"Brand"}</span>
+            </AccordionSummary>
+            <AccordionDetails sx={{padding: 0, margin: 0, maxHeight: 500, overflowY: 'auto'}}>
+              {isLoading2?
+                <div className='flex flex-col justify-center items-center h-[50px]'>
+                  <CircularProgress size={30} style={{color:"#cbd5e1"}} />
+                </div>:
+                <>
+                  {searchBrands.map(val=>
+                    <FormControlLabel key={val.id+val.description} id={'brand-'+val.id}
+                      value={val.id} checked={searchSelectedBrands.findIndex(val1=>val1===val.id)>-1}
+                      onChange={(event)=>addSearchBrand(event.target.value)}
+                      control={<Checkbox size='small'/>} 
+                      label={
+                        <div className='flex flex-row justify-start items-center w-[150px] overflow-hidden'>
+                          {val.image_url!=="none" &&
+                            <div className='flex justify-center items-center w-[40px] h-[20px] relative'>
+                              <Image src={val.image_url} alt="feature image" fill sizes='40px' priority={true} style={{objectFit: 'contain'}}/>
+                            </div>                        
+                          }                      
+                          <span className="text-xs ml-1 text-zinc-600">{val.description}</span>
+                        </div>
+                      }
+                    />
+                  )}
+                </>
+              }
+            </AccordionDetails>
+            <AccordionActions sx={{padding: 0, margin: 0, paddingBottom: 1, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+              <Button 
+                variant='text' 
+                style={{textTransform: 'none', fontSize: 11, color: '#77bd1f'}} 
+                startIcon={<Check style={{color: '#77bd1f'}}/>}
+                onClick={applyFiltersClicked}
+                size='small'
+              >Apply Filters</Button>
+              <span className='text-xs text-zinc-500 cursor-pointer hover:underline' onClick={removeAllSearchBrands}>Clear All</span>
+            </AccordionActions>
+          </Accordion>
+        </div>
+      }
+
+      <div className='flex flex-col justify-center items-center w-full' style={{borderBottom: '1px solid #e8e8e8'}}>
+        <Accordion className='w-full' defaultExpanded={false} disableGutters={true} square={true} sx={{padding: 0, margin: 0, paddingX: 2, boxShadow: 'none'}}>
+          <AccordionSummary expandIcon={<ExpandMore />} sx={{padding: 0, margin: 0}}>
+            <span className='text-sm w-full'>{"Price"}</span>
+          </AccordionSummary>
+          <AccordionDetails sx={{padding: 0, margin: 0}}>
+            <div className='flex flex-row justify-between items-center w-full gap-2'>
+              <TextField className='w-full'
+                id='price-min'
+                type='number'
+                value={parseFloat(''+searchPriceMin).toFixed(2)}
+                label="Min"
+                onChange={event=>setSearchPriceMin(event.target.value)} 
+                variant={"outlined"}
+                size='small'
+                InputProps={{
+                  startAdornment: <InputAdornment position="start"><span style={{fontSize: 13}}>Rs.</span></InputAdornment>,
+                }}
+                sx={{input: {textAlign: "right", paddingX: 0}}}
+                inputProps={{style: {fontSize: 13}}}
+                SelectProps={{style: {fontSize: 13}}}
+                InputLabelProps={{style: {fontSize: 15}}}
+              />
+              <TextField className='w-full'
+                id='price-max'
+                type='number'
+                value={parseFloat(''+searchPriceMax).toFixed(2)}
+                label="Max"
+                onChange={event=>setSearchPriceMax(event.target.value)} 
+                variant={"outlined"}
+                size='small'
+                InputProps={{
+                  startAdornment: <InputAdornment position="start"><span style={{fontSize: 13}}>Rs.</span></InputAdornment>,
+                }}
+                sx={{input: {textAlign: "right", paddingX: 0}}}
+                inputProps={{style: {fontSize: 13}}}
+                SelectProps={{style: {fontSize: 13}}}
+                InputLabelProps={{style: {fontSize: 15}}}
+              />
+            </div>
+          </AccordionDetails>
+          <AccordionActions sx={{padding: 0, margin: 0, paddingBottom: 1, paddingTop: 2, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+            <Button 
+              variant='text' 
+              style={{textTransform: 'none', fontSize: 11, color: '#77bd1f'}} 
+              startIcon={<Check style={{color: '#77bd1f'}}/>}
+              onClick={applyFiltersClicked}
+              size='small'
+            >Apply Filters</Button>
+            <span className='text-xs text-zinc-500 cursor-pointer hover:underline' onClick={()=>removeAllSearchPrices()}>Clear All</span>
+          </AccordionActions>
+        </Accordion>
+      </div>
+
+      {searchFeatures.map(val=>
+        <div key={val.id+val.description} className='flex flex-col justify-center items-center w-full' style={{borderBottom: '1px solid #e8e8e8'}}>
+          <Accordion className='w-full' defaultExpanded={false} disableGutters={true} square={true} sx={{padding: 0, margin: 0, paddingX: 2, boxShadow: 'none'}}>
+            <AccordionSummary expandIcon={<ExpandMore />} sx={{padding: 0, margin: 0}}>
+              <span className='text-sm w-full'>{val.description}</span>
+            </AccordionSummary>
+            <AccordionDetails sx={{padding: 0, margin: 0, maxHeight: 400, overflowY: 'auto'}}>
+              {val.sub_features.map(val1=>
+                <FormControlLabel key={val1.id} id={'sub-feature-'+val1.id}
+                  value={val1.id} checked={searchSelectedFeatures.findIndex(val2=>val2.id===val1.id)>-1}
+                  onChange={(event)=>addSearchFeature(event.target.value, val.id)}
+                  control={<Checkbox size='small'/>} 
+                  label={
+                    <div className='flex flex-row justify-start items-center w-[150px] overflow-hidden gap-2'>
+                      {val1.image_url!=="none" &&
+                        <div className='flex justify-center items-center w-[20px] h-[20px] relative bg-white'>
+                          <Image src={val1.image_url} alt="feature image" fill sizes='20px' priority={true} style={{objectFit: 'contain', borderRadius: 10}}/>
+                        </div>                        
+                      }                      
+                      <span className="text-xs ml-1 text-zinc-600">{val1.description}</span>
                     </div>
                   }
                 />
               )}
             </AccordionDetails>
+            <AccordionActions sx={{padding: 0, margin: 0, paddingBottom: 1, paddingTop: 2, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+              <Button 
+                variant='text' 
+                style={{textTransform: 'none', fontSize: 11, color: '#77bd1f'}} 
+                startIcon={<Check style={{color: '#77bd1f'}}/>}
+                onClick={applyFiltersClicked}
+                size='small'
+              >Apply Filters</Button>
+              <span className='text-xs text-zinc-500 cursor-pointer hover:underline' onClick={()=>removeAllSearchFeatures(val.id)}>Clear All</span>
+            </AccordionActions>
           </Accordion>
-        )}
-      </div>
+        </div>
+      )}
 
-      <Popper
-        open={openCategory}
-        anchorEl={categoryRef.current}
-        placement={width>768?'right-start':'top-start'}
-        transition={true}
-        style={{zIndex: 50}}
-      >
-        {({TransitionProps}) => (
-          <Grow {...TransitionProps}>
-            <Paper className='flex flex-col' style={{width: browserWidth}}>
-              <ClickAwayListener onClickAway={()=>setOpenCategory(false)}>
-                {isLoading1 ? 
-                  <div className='flex flex-col items-center justify-center w-full min-h-[200px] lg:h-[300px] sm:h-[250px] xs:h-[150px] bg-slate-100 shadow-xl'>
-                    <CircularProgress size={30} style={{color:"#71717a"}} />
-                    <span className="text-sm mt-5 font-semibold text-gray-700">{"Loading..."}</span>
-                  </div>:
-                  <div className='flex flex-col justify-start items-start w-full pb-2 px-3 bg-white shadow-xl'>
-                    <div className='flex flex-row justify-between items-center w-full py-2' style={{borderBottom: '1px solid #D1D5DB'}}>
-                      <span className='text-md font-semibold text-emerald-700'>{"Categories"}</span>
-                      <IconButton onClick={()=>setOpenCategory(false)} sx={{width: 30, height: 30, borderRadius: 15, color: '#fff', backgroundColor: '#9CA3AF'}}><Close sx={{width: 20, height: 20, color: '#ffffff'}}/></IconButton>
-                    </div>
-                    <div className='flex flex-row justify-start items-start w-full flex-wrap max-h-[600px] overflow-y-auto pt-2 xs:pt-5 pb-3'>
-                      {categories.map(val=>
-                        <div key={val.id} className='flex flex-row justify-start items-center h-[40px] w-[90%] xs:w-[175px] sm:w-[175px] md:w-[220px] gap-2 py-3 px-1 mr-0 xs:mr-5 cursor-pointer hover:bg-slate-200' style={{borderRight: width>440?('1px solid #D1D5DB'):'none'}} onClick={()=>{setSearchCategory({id: val.id, description: val.description});setOpenCategory(false);}}>
-                          <div className='flex flex-col justify-center items-center w-[30px] h-[30px]'>
-                            {val.image_url==="none" ? 
-                              <CameraAlt sx={{width: 30, height: 30, color: '#cbd5e1'}}/> : 
-                              <Avatar src={val.image_url} sx={{width: 30, height: 30}}/>
-                            }
-                          </div>
-                          <span className='text-xs'>{val.description}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                }
-              </ClickAwayListener>
-            </Paper>
-          </Grow>
-        )}
-      </Popper>
-      <Popper
-        open={openBrand}
-        anchorEl={brandRef.current}
-        placement={width>768?'right-start':'top-start'}
-        transition={true}
-        style={{zIndex: 50}}
-      >
-        {({TransitionProps}) => (
-          <Grow {...TransitionProps}>
-            <Paper className='flex flex-col' style={{width: browserWidth}}>
-              <ClickAwayListener onClickAway={()=>setOpenBrand(false)}>
-                {isLoading2 ? 
-                  <div className='flex flex-col items-center justify-center w-full h-[300px] lg:h-[300px] sm:h-[250px] xs:h-[150px] bg-slate-100 shadow-xl'>
-                    <CircularProgress size={30} style={{color:"#71717a"}} />
-                    <span className="text-sm mt-5 font-semibold text-gray-700">Loading...</span>
-                  </div>:
-                  <div className='flex flex-col justify-start items-start w-full pb-2 px-3 bg-white shadow-xl'>
-                    <div className='flex flex-row justify-between items-center w-full py-2' style={{borderBottom: '1px solid #D1D5DB'}}>
-                      <span className='text-md font-semibold text-emerald-700'>{"Brands"}</span>
-                      <IconButton onClick={()=>setOpenBrand(false)} sx={{width: 30, height: 30, borderRadius: 15, color: '#fff', backgroundColor: '#9CA3AF'}}><Close sx={{width: 20, height: 20, color: '#ffffff'}}/></IconButton>
-                    </div>
-                    <div className='flex flex-row justify-start items-start w-full flex-wrap max-h-[600px] overflow-y-auto pt-2 xs:pt-5 pb-3'>
-                      {brands.map(val=>
-                        <div key={val.id} className='flex flex-row justify-start items-center h-[40px] w-[90%] xs:w-[175px] sm:w-[175px] md:w-[220px] gap-2 py-3 px-1 mr-0 xs:mr-5 cursor-pointer hover:bg-slate-200' style={{borderRight: width>440?('1px solid #D1D5DB'):'none'}} onClick={()=>{setSearchBrand({id: val.id, description: val.description}); setOpenBrand(false);}}>
-                          <div className='flex flex-col justify-center items-center w-[30px] h-[30px]'>
-                            {val.image_url==="none" ? 
-                              <CameraAlt sx={{width: 30, height: 30, color: '#cbd5e1'}}/> : 
-                              <Avatar src={val.image_url} sx={{width: 30, height: 30}}/>
-                            }
-                          </div>
-                          <span className='text-xs lg:text-sm'>{val.description}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                }
-              </ClickAwayListener>
-            </Paper>
-          </Grow>
-        )}
-      </Popper>
-      <Popper
-        open={openModel}
-        anchorEl={modelRef.current}
-        placement={width>768?'right-start':'top-start'}
-        transition={true}
-        style={{zIndex: 50}}
-      >
-        {({TransitionProps}) => (
-          <Grow {...TransitionProps}>
-            <Paper className='flex flex-col' style={{width: browserWidth}}>
-              <ClickAwayListener onClickAway={()=>setOpenModel(false)}>
-                {isLoading3 ? 
-                  <div className='flex flex-col items-center justify-center w-full h-[300px] lg:h-[300px] md:h-[200px] sm:h-[200px] xs:h-[150px] bg-slate-100 shadow-xl'>
-                    <CircularProgress size={30} style={{color:"#71717a"}} />
-                    <span className="text-sm mt-5 font-semibold text-gray-700">Loading...</span>
-                  </div>:
-                  <div className='flex flex-col justify-start items-start w-full pb-2 px-3 bg-white shadow-xl'>
-                    <div className='flex flex-row justify-between items-center w-full py-2' style={{borderBottom: '1px solid #D1D5DB'}}>
-                      <div className='flex flex-row justify-center items-center'>
-                        <span className='text-md font-semibold text-emerald-700'>{"Models"}</span>
-                        {searchBrand.id>0 && <span className='text-xs bg-violet-200 text-violet-800 px-2 py-1 ml-3 rounded-lg font-bold'>{"Brand: "+searchBrand.description}</span>}
-                      </div>
-                      <IconButton onClick={()=>setOpenModel(false)} sx={{width: 30, height: 30, borderRadius: 15, color: '#fff', backgroundColor: '#9CA3AF'}}><Close sx={{width: 20, height: 20, color: '#ffffff'}}/></IconButton>
-                    </div>
-                    <div className='flex flex-row justify-start items-start w-full flex-wrap max-h-[600px] overflow-y-auto pt-2 xs:pt-5 pb-3'>
-                      {models.map(val=>
-                        <div key={val.id} className='flex flex-row justify-start items-center h-[40px] w-[90%] xs:w-[175px] sm:w-[175px] md:w-[220px] gap-2 py-3 px-1 mr-0 xs:mr-5 cursor-pointer hover:bg-slate-200' style={{borderRight: width>440?('1px solid #D1D5DB'):'none'}} onClick={()=>{setSearchModel({id: val.id, description: val.description, brandId: val.brandId, brandDescription: val.brandDescription});setOpenModel(false);}}>
-                          <span className='text-xs lg:text-sm'>{val.description}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                }
-              </ClickAwayListener>
-            </Paper>
-          </Grow>
-        )}
-      </Popper>
+      <div className='flex flex-col justify-center items-center w-full' style={{borderBottom: '1px solid #e8e8e8'}}>
+        <Accordion className='w-full' defaultExpanded={true} disableGutters={true} square={true} sx={{padding: 0, margin: 0, paddingX: 2, boxShadow: 'none'}}>
+          <AccordionSummary expandIcon={<ExpandMore />} sx={{padding: 0, margin: 0}}>
+            <span className='text-sm w-full'>{"Sort"}</span>
+          </AccordionSummary>
+          <AccordionDetails sx={{padding: 0, margin: 0}}>
+            <div className='flex flex-row justify-between items-center w-full gap-2'>
+              <TextField
+                className='w-full'
+                id='sort-by-2'
+                select={true}
+                value={searchSortBy}
+                onChange={event=>setSearchSortBy(event.target.value)} 
+                label='Sort By'
+                size='small'
+                inputProps={{style: {fontSize: 13}}}
+                SelectProps={{style: {fontSize: 11}}}
+                InputLabelProps={{style: {fontSize: 15}}}
+              >
+                <MenuItem className='text-xs' value={"description"}>Description</MenuItem>
+                <MenuItem className='text-xs' value={"price"}>Price</MenuItem>
+              </TextField>
+              <TextField
+                className='w-full'
+                id='order'
+                select={true}
+                value={searchOrder}
+                onChange={event=>setSearchOrder(event.target.value)} 
+                label='Order'
+                size='small'
+                inputProps={{style: {fontSize: 13}}}
+                SelectProps={{style: {fontSize: 11}}}
+                InputLabelProps={{style: {fontSize: 15}}}
+              >
+                <MenuItem className='text-xs' value={"ASC"}>Ascending</MenuItem>
+                <MenuItem className='text-xs' value={"DESC"}>Descending</MenuItem>
+              </TextField>
+            </div>
+          </AccordionDetails>
+          <AccordionActions sx={{padding: 0, margin: 0, paddingBottom: 1, paddingTop: 2, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+            <Button 
+              variant='text' 
+              style={{textTransform: 'none', fontSize: 11, color: '#77bd1f'}} 
+              startIcon={<Check style={{color: '#77bd1f'}}/>}
+              onClick={applyFiltersClicked}
+              size='small'
+            >Apply Filters</Button>
+            <span className='text-xs text-zinc-500 cursor-pointer hover:underline' onClick={()=>removeAllSearchSort()}>Default</span>
+          </AccordionActions>
+        </Accordion>
+      </div>
     </div>
   )
 }

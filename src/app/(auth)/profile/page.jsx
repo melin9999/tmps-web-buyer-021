@@ -10,6 +10,7 @@ import { Avatar, CircularProgress, InputAdornment, MenuItem, Dialog, IconButton,
 import { Folder, CropRotate, Save, Delete, Key, CameraAlt, MailOutline, Phone, Close, EditOutlined } from '@mui/icons-material';
 import useWindowDimensions from '@/hooks/useWindowDimension';
 import LoadingScreen from '@/components/screens/LoadingScreen';
+import Navbar from '@/components/headers/Navbar';
 
 const Profile = () => {
   const router = useRouter();
@@ -95,7 +96,7 @@ const Profile = () => {
         }
       }
       else{
-        setPhotoURL("http://localhost:8000/"+response.data.data.image_url);
+        setPhotoURL("http://tm-web.effisoftsolutions.com/"+response.data.data.image_url);
       }
     }
     catch(error){
@@ -212,7 +213,7 @@ const Profile = () => {
       formData.append('imageUrl', file);
       axios({
         method: "post",
-        url: "http://localhost:8000/online-users/edit-image-web",
+        url: "http://tm-web.effisoftsolutions.com/online-users/edit-image-web",
         data: formData,
         headers: { "Content-Type": "multipart/form-data" },
       })
@@ -315,6 +316,7 @@ const Profile = () => {
 
   return (
     <>
+      <Navbar search={false} applyFilters={null}/>
       {statusLoading?<LoadingScreen height={(height-80)}/>:
         <div className='form_container' style={{minHeight: (height-80)}}>
           <div className='form_container_medium'>

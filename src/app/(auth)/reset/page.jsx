@@ -165,7 +165,7 @@ const Reset = () => {
           setEditPhone(response.data.data.phone);
           setEditNotifyBy(response.data.data.notify_by);
           if(response.data.data.image_url!=="none"){
-            setImageUrl("https://tm002.techmax.lk/"+response.data.data.image_url);
+            setImageUrl("http://tm002.techmax.lk/"+response.data.data.image_url);
           }
           sendResetCode(response.data.data.id);
         }
@@ -202,7 +202,7 @@ const Reset = () => {
           setEditPhone(response.data.data.phone);
           setEditNotifyBy(response.data.data.notify_by);
           if(response.data.data.image_url!=="none"){
-            setImageUrl("https://tm002.techmax.lk/"+response.data.data.image_url);
+            setImageUrl("http://tm002.techmax.lk/"+response.data.data.image_url);
           }
         }
         catch(error){

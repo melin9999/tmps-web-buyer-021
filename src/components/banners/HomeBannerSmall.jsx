@@ -4,7 +4,7 @@ import React from 'react';
 
 const HomeBannerSmall = ({width, banner}) => {
   return (
-    <div className='flex flex-col justify-center items-center relative' style={{margin: 0, width: width>1152?(1152):(width-20), height:width>1152?(275):((width/4)*1)}}>
+    <div className='flex flex-col justify-center items-center relative' style={{margin: 0, width: width>1280?(1000):('90%'), height:width>1280?(250):((((width*90)/100)/4))}}>
       <Image src={banner.image_url} alt="banner" fill priority={true} style={{objectFit: 'cover'}}/>
       {banner.show_caption==="yes" && banner.link_only==="no" && 
         <div className='flex flex-col w-full lg:max-w-[600px] lg:opacity-70 px-2 py-2' style={width<1024?{backgroundColor: banner.position.backgroundColor}:banner.position}>
@@ -19,11 +19,6 @@ const HomeBannerSmall = ({width, banner}) => {
               <Button size='small' variant='outlined' onClick={()=>router.push(banner.link)}>{"Learn More..."}</Button>
             </div>
           }
-        </div>
-      }
-      {banner.link_only==="yes" &&
-        <div className='absolute' style={banner.position}>
-          <Button size='small' variant='outlined' className='rounded-[10px]' style={{backgroundColor: banner.linkStyles.link_background_color, color: banner.linkStyles.link_text_color, borderColor: banner.linkStyles.link_text_color, borderWidth: 2, textTransform: 'none'}} onClick={()=>router.push(banner.link)}>{"More..."}</Button>
         </div>
       }
     </div>

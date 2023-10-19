@@ -23,7 +23,7 @@ function SamplePrevArrow(props) {
   );
 }
 
-const FeaturedCategories = ({width, limit}) => {
+const FeaturedCategories = ({width, limit, selectValue}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [serverError, setServerError] = useState(false);
 
@@ -50,28 +50,28 @@ const FeaturedCategories = ({width, limit}) => {
   }, []);
 
   useEffect(() => {
-    if(width>=1152){
-      setItemWidth((1100/6)-20);
+    if(width>=1280){
+      setItemWidth((1280/6)-60);
       setNumberOfSlides(6);
       setSlidesToScroll(5);
     }
-    else if(width>=1024 && width<1152){
-      setItemWidth((width/5)-20);
+    else if(width>=1024 && width<1280){
+      setItemWidth((width/5)-60);
       setNumberOfSlides(5);
       setSlidesToScroll(4);
     }
     else if(width>=640 && width<1024){
-      setItemWidth((width/4)-20);
+      setItemWidth((width/4)-60);
       setNumberOfSlides(4);
       setSlidesToScroll(3);
     }
     else if(width>=440 && width<640){
-      setItemWidth((width/3)-20);
+      setItemWidth((width/3)-60);
       setNumberOfSlides(3);
       setSlidesToScroll(2);
     }
     else if(width>=340 && width<440){
-      setItemWidth((width/2)-20);
+      setItemWidth((width/2)-60);
       setNumberOfSlides(2);
       setSlidesToScroll(1);
     }
@@ -89,7 +89,7 @@ const FeaturedCategories = ({width, limit}) => {
     try{
       var error = false;
       if(!error){
-        const response = await axios.post("/api/featured/categories", {
+        const response = await axios.post("/api/categories/featured", {
           limit: limit,
         });
         const values = [];
@@ -98,16 +98,16 @@ const FeaturedCategories = ({width, limit}) => {
         data.map(val => {
           ++index;
           var imageUrl = "";
-          if(val.part_category.image_url==="none"){
+          if(val.image_url==="none"){
             imageUrl = "none";
           }
           else{
-            imageUrl = "http://localhost:8000/"+val.part_category.image_url;
+            imageUrl = "http://tm-web.effisoftsolutions.com/"+val.image_url;
           }
           values.push({
             index: index,
-            id: val.part_category.id,
-            description: val.part_category.description,
+            id: val.id,
+            description: val.description,
             image_url: imageUrl,
             count: val.count,
           });
@@ -124,19 +124,26 @@ const FeaturedCategories = ({width, limit}) => {
   }
 
   return (
-    <div className='bg-white relative pt-3' style={{width: width>=1152?1152:(width-15)}}>
+    <>
       {isLoading?
-        <div className='flex flex-col items-center justify-center w-full h-[200px] lg:h-[150px] sm:h-[150px] xs:h-[150px] bg-white'>
+        <div className='flex flex-col items-center justify-center w-full h-[300px] lg:h-[225px] sm:h-[225px] xs:h-[225px] mb-10 mt-10 bg-zinc-100'>
           <CircularProgress size={30} style={{color:"#71717a"}} />
-          <span className="text-sm mt-5 font-semibold text-gray-700">Loading...</span>
         </div>:
-        <Slider {...settings}>
-          {featured.map((val)=>
-            <FeaturedCategory key={val.id} val={val} itemWidth={itemWidth}/>
-          )}
-        </Slider>
-      }
-    </div>
+        <div className='bg-white w-full mt-10 mb-10'>
+          <div className='flex flex-row justify-between items-center w-full py-2 px-1 xs:px-2'>
+            <span className='text-sm xs:text-md md:text-md font-semibold text-zinc-600'>Categories</span>
+            <span></span>
+          </div>
+          <div className='relative pt-3 w-full'>
+            <Slider {...settings}>
+              {featured.map((val)=>
+                <FeaturedCategory key={val.id+val.description} val={val} itemWidth={itemWidth} selectValue={selectValue}/>
+              )}
+            </Slider>
+          </div>
+        </div>
+      }    
+    </>
   )
 }
 

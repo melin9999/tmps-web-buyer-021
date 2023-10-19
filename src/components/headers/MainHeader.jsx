@@ -5,7 +5,6 @@ import { useState, useEffect, useRef } from 'react';
 import {  signOut, useSession } from 'next-auth/react';
 import { Avatar, Button, CircularProgress, ClickAwayListener, Divider, Drawer, Grow, IconButton, InputAdornment, ListItemIcon, MenuItem, MenuList, Paper, Popper, TextField } from "@mui/material";
 import { DirectionsCar, Favorite, FileCopy, Login, Logout, Menu, MoreVert, Notifications, Person, PersonAdd, Search, Settings, ShoppingCart } from "@mui/icons-material";
-import Navbar from './Navbar';
 
 const MainHeader = () => {
   const router = useRouter();
@@ -27,7 +26,7 @@ const MainHeader = () => {
         }
       }
       else{
-        setImageUrl("http://localhost:8000/"+session.user.image);
+        setImageUrl("http://tm-web.effisoftsolutions.com/"+session.user.image);
       }
     }
     else{
@@ -249,7 +248,6 @@ const MainHeader = () => {
           </div>
         }
       </div>
-      <Navbar/>      
     </div>
   )
 }

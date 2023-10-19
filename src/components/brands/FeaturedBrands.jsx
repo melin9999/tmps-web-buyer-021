@@ -24,7 +24,7 @@ function SamplePrevArrow(props) {
   );
 }
 
-const FeaturedBrands = ({width, limit}) => {
+const FeaturedBrands = ({width, limit, selectValue}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [serverError, setServerError] = useState(false);
 
@@ -90,7 +90,7 @@ const FeaturedBrands = ({width, limit}) => {
     try{
       var error = false;
       if(!error){
-        const response = await axios.post("/api/featured/brands", {
+        const response = await axios.post("/api/brands/featured", {
           limit: limit,
         });
         const values = [];
@@ -99,18 +99,17 @@ const FeaturedBrands = ({width, limit}) => {
         data.map(val => {
           ++index;
           var imageUrl = "";
-          if(val.brand.image_url==="none"){
+          if(val.image_url==="none"){
             imageUrl = "none";
           }
           else{
-            imageUrl = "http://localhost:8000/"+val.brand.image_url;
+            imageUrl = "http://tm-web.effisoftsolutions.com/"+val.image_url;
           }
           values.push({
             index: index,
-            id: val.brand.id,
-            description: val.brand.description,
-            image_url: imageUrl,
-            count: val.count,
+            id: val.id,
+            description: val.description,
+            image_url: imageUrl
           });
         });
         setFeatured(values);
@@ -124,21 +123,27 @@ const FeaturedBrands = ({width, limit}) => {
     }
   }
   
-
   return (
-    <div className='bg-white relative pt-3' style={{width: width>=1152?1152:(width-15)}}>
-      {isLoading?
-        <div className='flex flex-col items-center justify-center w-full h-[200px] lg:h-[150px] sm:h-[150px] xs:h-[150px] bg-white'>
-          <CircularProgress size={30} style={{color:"#71717a"}} />
-          <span className="text-sm mt-5 font-semibold text-gray-700">Loading...</span>
-        </div>:
-        <Slider {...settings}>
-          {featured.map((val)=>
-            <FeaturedBrand key={val.id} val={val} itemWidth={itemWidth}/>
-          )}
-        </Slider>
-      }
-    </div>
+    <>
+    {isLoading?
+      <div className='flex flex-col items-center justify-center w-full h-[300px] lg:h-[225px] sm:h-[225px] xs:h-[225px] mb-10 bg-zinc-100'>
+        <CircularProgress size={30} style={{color:"#71717a"}} />
+      </div>:
+      <div className='bg-white w-full mb-10'>
+        <div className='flex flex-row justify-between items-center w-full py-2 px-1 xs:px-2'>
+          <span className='text-sm xs:text-md md:text-md font-semibold text-zinc-600'>Brands</span>
+          <span></span>
+        </div>
+        <div className='relative pt-3 w-full'>
+          <Slider {...settings}>
+            {featured.map((val)=>
+              <FeaturedBrand key={val.id+val.description} val={val} itemWidth={itemWidth} selectValue={selectValue}/>
+            )}
+          </Slider>
+        </div>
+      </div>
+    }
+    </>
   )
 }
 

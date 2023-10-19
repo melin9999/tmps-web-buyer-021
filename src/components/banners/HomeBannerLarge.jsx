@@ -2,9 +2,9 @@ import { Button } from '@mui/material';
 import Image from 'next/image';
 import React from 'react';
 
-const HomeBannerLarge = ({width, banner}) => {
+const HomeBannerLarge = ({width, banner, selectValue}) => {
   return (
-    <div className='flex flex-col justify-center items-center relative' style={{margin: 0, width: width>1152?(1152):(width-20), height:width>1152?(600):((width/16)*9)}}>
+    <div className='flex flex-col justify-center items-center relative' style={{margin: 0, width: width>1280?(1280):('100%'), height:width>1280?(640):((width/2))}}>
       <Image src={banner.image_url} alt="banner" fill priority={true} style={{objectFit: 'cover'}}/>
       {banner.show_caption==="yes" && banner.link_only==="no" && 
         <div className='flex flex-col w-full lg:max-w-[600px] lg:opacity-70 px-2 py-2' style={width<1024?{backgroundColor: banner.position.backgroundColor}:banner.position}>
@@ -22,9 +22,7 @@ const HomeBannerLarge = ({width, banner}) => {
         </div>
       }
       {banner.link_only==="yes" &&
-        <div className='absolute' style={banner.position}>
-          <Button size='small' variant='outlined' className='rounded-[10px]' style={{backgroundColor: banner.linkStyles.link_background_color, color: banner.linkStyles.link_text_color, borderColor: banner.linkStyles.link_text_color, borderWidth: 2, textTransform: 'none'}} onClick={()=>router.push(banner.link)}>{"More..."}</Button>
-        </div>
+        <div className='flex flex-col justify-center items-center w-[60px] xxs:w-[70px] xs:w-[100px] sm:w-[140px] md:w-[180px] lg:w-[220px] h-[15px] xxs:h-[20px] xs:h-[30px] sm:h-[40px] md:h-[50px] lg:h-[60px] cursor-pointer opacity-0' style={banner.position} onClick={()=>selectValue(banner.link)}>Load</div>
       }
     </div>
   )
